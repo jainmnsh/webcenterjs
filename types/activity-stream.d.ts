@@ -19,9 +19,9 @@ declare namespace WebCenter {
         }
 
         interface LikeItem extends Common.Linked {
-            id: string;
-            created: Date;
-            author: Common.PersonReference;
+            id?: string;
+            created?: Date;
+            author?: Common.PersonReference;
         }
 
         interface LikeList extends Common.PaginatedLinked {

@@ -357,7 +357,7 @@ function recover(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
     const url: string = config.url;
     const restBaseUrl: string = Config.getRestBaseUrl();
-    if (url.indexOf(restBaseUrl + "/api") >= 0) {
+    if (url.indexOf(restBaseUrl + "/api") >= 0 || url.indexOf("utoken") > 0 ) {
         if (isAuthenticated()) {
             if (url.indexOf("utoken") < 0) {
                 if (config.params) {

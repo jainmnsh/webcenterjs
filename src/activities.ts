@@ -239,7 +239,7 @@ export function deleteActivityLike(activityId: string, likeId: string): Promise<
 
 export function createActivityLike(
     activityId: string,
-    like: WebCenter.ActivityStream.LikeItem): Promise<WebCenter.ActivityStream.LikeItem> {
+    like: WebCenter.ActivityStream.LikeItem = {}): Promise<WebCenter.ActivityStream.LikeItem> {
     const params: {} = {
         activityId,
     };
@@ -266,7 +266,7 @@ export function createLike(
     serviceId: string,
     objectType: string,
     objectId: string,
-    like: WebCenter.ActivityStream.LikeItem): Promise<WebCenter.ActivityStream.LikeItem> {
+    like: WebCenter.ActivityStream.LikeItem = {}): Promise<WebCenter.ActivityStream.LikeItem> {
     const params: {} = {
         serviceId,
         objectType,

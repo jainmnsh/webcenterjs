@@ -8,8 +8,8 @@ beforeAll(() => {
     const csBaseUrl: string = "http://krowddev.darden.com/cs";
 
     WebCenter.Config.setRestBaseUrl(restBaseUrl);
-    WebCenter.Config.setWcBaseUrl(wcBaseUrl);
-    WebCenter.Config.setCsBaseUrl(csBaseUrl);
+    // WebCenter.Config.setWcBaseUrl(wcBaseUrl);
+    // WebCenter.Config.setCsBaseUrl(csBaseUrl);
 
     const username: string = "880690388";
     const password: string = "Darden88";
