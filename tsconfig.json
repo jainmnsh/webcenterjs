@@ -1,0 +1,48 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "outDir": "dist",
+        "rootDir": "src",
+        "baseUrl": "src",
+        "declaration": true,
+        "paths":{
+            "components/*":[
+                "components/*"
+            ]            
+        },
+        "moduleResolution":"node",
+        "allowSyntheticDefaultImports": true,
+        "noImplicitAny": false,
+        "experimentalDecorators": true,
+        "preserveConstEnums": true,
+        "allowJs": false,
+        "sourceMap": false,    
+        "noEmitOnError":false,
+        "noEmitHelpers":true,
+        "noFallthroughCasesInSwitch":true,
+        "noImplicitReturns":false,
+        "lib":[
+            "es2015.promise",
+            "es2015.collection",
+            "es2015.iterable",
+            "dom",
+            "es5"
+        ],
+        "pretty":true,
+        "importHelpers": true,
+        "emitDecoratorMetadata": true,
+        "alwaysStrict":true
+    },
+    "filesGlob": [
+        "src/**/*.ts",
+        "types/**/*.d.ts"
+    ],
+    "exclude": [
+        "build",
+	    "lib",
+	    "dist",
+        "node_modules"
+    ],
+    "compileOnSave": true
+}

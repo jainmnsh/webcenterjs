@@ -1,0 +1,36 @@
+{
+  "name": "webcenter",
+  "version": "1.0.0",
+  "description": "Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
+  "main": "./build/index.js",
+  "types": [
+    "./dist/index.d.ts",
+    "./types/index.d.ts"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "oracle",
+    "webcenter",
+    "rest"
+  ],
+  "author": "Rakesh Gajula <rakesh.gajula@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@types/jasmine": "^2.5.47",
+    "@types/lodash": "^4.14.62",
+    "@types/node": "^6.0.69",
+    "@types/xmldom": "^0.1.29",
+    "axios": "^0.16.1",
+    "lodash": "^4.17.4",
+    "tslib": "^1.6.0",
+    "xmldom": "^0.1.27",
+    "xpath": "^0.0.24"
+  },
+  "devDependencies": {
+    "chance": "^1.0.6",
+    "jasmine": "^2.5.3",
+    "jasmine-reporters": "^2.2.1"
+  }
+}

@@ -1,0 +1,6 @@
+{
+    "vsicons.presets.angular": false,
+    "git.enabled": true,
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "tslint.configFile": "tslint.json"
+}
