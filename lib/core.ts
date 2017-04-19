@@ -178,7 +178,7 @@ export function getUrlParams(url: string): {} {
 export function getServiceUrlParams(serviceUrlSuffix: string, params?: {}): {} {
     let url: string = serviceUrlSuffix;
     let urlParams: {} = {};
-    const resParams: {} = {
+    let resParams: {} = {
         data: "data",
         itemsPerPage: ITEMS_PER_PAGE,
         projection: "summary",
@@ -197,13 +197,15 @@ export function getServiceUrlParams(serviceUrlSuffix: string, params?: {}): {} {
         _.extend(resParams, params);
     }
 
-    for (const urlParamKey in urlParams) {
+    resParams = resParams ? _.omitBy(resParams, _.isNil) : resParams;
+
+    /*for (const urlParamKey in urlParams) {
         if (typeof resParams[urlParamKey] !== "boolean") {
             if (!resParams[urlParamKey]) {
                 delete resParams[urlParamKey];
             }
         }
-    }
+    }*/
     return resParams;
 }
 
@@ -250,6 +252,7 @@ export function doPut(
     const url: string = getServiceUrl(serviceUrlSuffix, params);
     httpOptions = httpOptions ? httpOptions : {};
     httpOptions.params = urlParams;
+    data = data ? _.omitBy(data, _.isNil) : data;
     return axios.put(url, data, httpOptions).then((response) => {
         return response.data;
     });
@@ -260,13 +263,14 @@ export function doPost(
     data: any,
     params?: {},
     httpOptions?: AxiosRequestConfig): Promise<any> {
-    const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-    const url: string = getServiceUrl(serviceUrlSuffix, params);
-    httpOptions = httpOptions ? httpOptions : {};
-    httpOptions.params = urlParams;
-    return axios.post(url, data, httpOptions).then((response) => {
-        return response.data;
-    });
+        const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
+        const url: string = getServiceUrl(serviceUrlSuffix, params);
+        httpOptions = httpOptions ? httpOptions : {};
+        httpOptions.params = urlParams;
+        data = data ? _.omitBy(data, _.isNil) : data;
+        return axios.post(url, data, httpOptions).then((response) => {
+            return response.data;
+        });
 }
 
 export function doDelete(

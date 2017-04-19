@@ -6,13 +6,13 @@ const chance: any = new Chance();
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 beforeAll(() => {
-    const restBaseUrl: string = "http://krowddev.darden.com/rest";
-    const wcBaseUrl: string = "http://krowddev.darden.com/webcenter";
-    const csBaseUrl: string = "http://krowddev.darden.com/cs";
+    const restBaseUrl: string = "http://krowdtest.darden.com/rest";
+    const wcBaseUrl: string = "http://krowdtest.darden.com/webcenter";
+    const csBaseUrl: string = "http://krowdtest.darden.com/cs";
 
     WebCenter.Config.setRestBaseUrl(restBaseUrl);
-    // WebCenter.Config.setWcBaseUrl(wcBaseUrl);
-    // WebCenter.Config.setCsBaseUrl(csBaseUrl);
+    WebCenter.Config.setWcBaseUrl(wcBaseUrl);
+    WebCenter.Config.setCsBaseUrl(csBaseUrl);
 
     const username: string = "880690388";
     const password: string = "Darden88";
@@ -30,7 +30,7 @@ afterAll(() => {
 
 describe("Discussions", () => {
 
-  /*it("Get Forums", (done: any) => {
+  it("Get Forums", (done: any) => {
     WebCenter.Discussions.getForums().then((forums: WebCenter.Discussions.Forums) => {
         expect(forums).toBeDefined();
         done();
@@ -38,6 +38,20 @@ describe("Discussions", () => {
       fail("Failed to Get Forums.");
       done();
     });
-  }, 10000);*/
+  }, 10000);
+
+  it("Create Forum", (done: any) => {
+    const forumName: string = chance.word();
+    const description: string = chance.sentence();
+    WebCenter.Discussions.createForum(forumName, `${forumName} Display`, description).then(
+      (forum: WebCenter.Discussions.Forum) => {
+        expect(forum).toBeDefined();
+        done();
+    }, (error: any) => {
+      fail("Failed to Create Forum.");
+      done();
+    });
+  }, 10000);
+
 
 });

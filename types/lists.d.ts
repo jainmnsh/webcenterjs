@@ -13,7 +13,7 @@ declare namespace WebCenter {
         }
 
         interface MetaColumn extends Common.Linked {
-            id: string;
+            id?: string;
             name: string;
             dataType: string;
             required: boolean;
@@ -32,7 +32,7 @@ declare namespace WebCenter {
         }
 
         interface MetaColumns extends Common.Linked, Common.LinkedItem<MetaColumn> {
-            metaColumn: MetaColumn[];
+            // metaColumn: MetaColumn[];
         }
 
         interface Row extends Common.Linked {
@@ -58,16 +58,16 @@ declare namespace WebCenter {
         }
 
         interface SpacesList extends Common.Linked {
-            id: string;
+            id?: string;
             name: string;
-            description: string;
-            scope: Scope;
-            creator: string;
-            author: Common.PersonReference;
-            created: Date;
-            modifier: string;
-            modifiedByUser: Common.PersonReference;
-            modified: Date;
+            description?: string;
+            scope?: Scope;
+            creator?: string;
+            author?: Common.PersonReference;
+            created?: Date;
+            modifier?: string;
+            modifiedByUser?: Common.PersonReference;
+            modified?: Date;
             columns: MetaColumns;
         }
 

@@ -5,13 +5,15 @@ const chance: any = new Chance();
 
 let listName: string;
 let status: string;
+let portalName: string;
+let attrName: string;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 beforeAll(() => {
-    const restBaseUrl: string = "http://krowddev.darden.com/rest";
-    const wcBaseUrl: string = "http://krowddev.darden.com/webcenter";
-    const csBaseUrl: string = "http://krowddev.darden.com/cs";
+    const restBaseUrl: string = "http://krowdstage.darden.com/rest";
+    const wcBaseUrl: string = "http://krowdstage.darden.com/webcenter";
+    const csBaseUrl: string = "http://krowdstage.darden.com/cs";
 
     WebCenter.Config.setRestBaseUrl(restBaseUrl);
     WebCenter.Config.setWcBaseUrl(wcBaseUrl);
@@ -70,7 +72,98 @@ describe("Portal", () => {
             expect(attrs.resourceType).toBe("urn:oracle:webcenter:space:attributes");
             done();
         }, (error: any) => {
-            fail("Failed to Get Portal Templates.");
+            fail("Failed to Get Portal Attributes.");
+            done();
+        });
+    }, 10000);
+
+    it("Create Portal", (done: any) => {
+        portalName = chance.word();
+        let portalDesc: string = chance.sentence();
+        WebCenter.Portal.createPortal(portalName, "Portal", portalDesc).then((space: WebCenter.Spaces.Space) => {
+            expect(space.displayName).toBe(portalName);
+            expect(space.description).toBe(portalDesc);
+            expect(space.templateName).toBe("Portal");
+            done();
+        }, (error: any) => {
+            fail("Failed to Create Portal.");
+            done();
+        });
+    }, 40000);
+
+    it("Get Portal By Name", (done: any) => {
+        WebCenter.Portal.getPortal(portalName).then((space: WebCenter.Spaces.Space) => {
+            expect(space.displayName).toBe(portalName);
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal By Name.");
+            done();
+        });
+    }, 10000);
+
+    it("Get Portal Members", (done: any) => {
+        WebCenter.Portal.getPortalMembers(portalName).then((members: WebCenter.Spaces.Members) => {
+            expect(members.items.length).toBe(1);
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal Members.");
+            done();
+        });
+    }, 10000);
+
+    it("Create Portal Attribute", (done: any) => {
+        attrName = chance.word();
+        const attrDesc: string = chance.sentence();
+        const attrVal: string = chance.word();
+        WebCenter.Portal.createPortalAttribute(portalName, attrName, attrVal, attrDesc).then(
+            (attr: WebCenter.Spaces.Attribute) => {
+            expect(attr.resourceType).toBe("urn:oracle:webcenter:space:attribute");
+            expect(attr.name).toBe(attrName);
+            expect(attr.value).toBe(attrVal);
+            done();
+        }, (error: any) => {
+            fail("Failed to Create Portal Attribute.");
+            done();
+        });
+    }, 10000);
+
+    it("Get Portal Attribute", (done: any) => {
+        WebCenter.Portal.getPortalAttribute(portalName, attrName).then(
+            (attr: WebCenter.Spaces.Attribute) => {
+            expect(attr.resourceType).toBe("urn:oracle:webcenter:space:attribute");
+            expect(attr.name).toBe(attrName);
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal Attribute.");
+            done();
+        });
+    }, 10000);
+
+    it("Get Portal Attributes", (done: any) => {
+        WebCenter.Portal.getPortalAttributes(portalName).then((attrs: WebCenter.Spaces.Attributes) => {
+            expect(attrs.resourceType).toBe("urn:oracle:webcenter:space:attributes");
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal Attributes.");
+            done();
+        });
+    }, 10000);
+
+    it("Get Portal Site Resources", (done: any) => {
+        WebCenter.Portal.getSiteResources(portalName).then((resources: any) => {
+            expect(resources.resourceType).toBe("urn:oracle:webcenter:spaces:siteresources");
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal Site Resources.");
+            done();
+        });
+    }, 10000);
+
+    it("Delete Portal By Name", (done: any) => {
+        WebCenter.Portal.deletePortal(portalName).then((res: any) => {
+            done();
+        }, (error: any) => {
+            fail("Failed to Get Portal Attributes.");
             done();
         });
     }, 10000);

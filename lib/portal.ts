@@ -189,8 +189,8 @@ export function getTemplateAttributes(
  * @param projection valid values are summary,details
  */
 export function getSiteResources(
-    search?: string,
     spaceName?: string,
+    searchQuery?: string,
     projection?: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
@@ -198,7 +198,7 @@ export function getSiteResources(
     if (spaceName) {
         const params: any = {
             itemsPerPage,
-            q: search,
+            q: searchQuery,
             spacename: spaceName,
             startIndex,
         };
@@ -208,8 +208,8 @@ export function getSiteResources(
         return Core.doGet(SITERESOURCES_API, params);
     } else {
         const params: any = {};
-        if (search) {
-            params.q = search;
+        if (searchQuery) {
+            params.q = searchQuery;
         }
         return Core.getResourceUrl(
             "urn:oracle:webcenter:spaces:siteresources",
