@@ -37,7 +37,7 @@ export function getPortalLists(
     query: string,
     projection: string = "summary",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Spaces> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Lists.SpacesList> {
     const params: {} = {
         itemsPerPage,
         projection,
@@ -57,8 +57,8 @@ export function getPortalLists(
  */
 export function createPortalList(
     portalName: string,
-    spaceList: WebCenter.Spaces.Spaces,
-    ): Promise<WebCenter.Spaces.Spaces> {
+    spaceList: WebCenter.Lists.SpacesList,
+    ): Promise<WebCenter.Lists.SpacesList> {
     const params: {} = {
         spacename: portalName,
     };

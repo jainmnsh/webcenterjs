@@ -2,9 +2,9 @@
   "name": "webcenter",
   "version": "1.0.0",
   "description": "Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
-  "main": "./build/index.js",
+  "main": "./dist/lib/index.js",
   "types": [
-    "./dist/index.d.ts",
+    "./dist/lib/index.d.ts",
     "./types/index.d.ts"
   ],
   "scripts": {

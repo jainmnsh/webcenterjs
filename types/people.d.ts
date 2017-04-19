@@ -25,7 +25,7 @@ declare namespace WebCenter {
         }
 
         interface ListNames extends Common.PaginatedLinked {
-            listName: ListName[];
+            items: ListName[];
         }
 
         interface Person extends Common.Linked {

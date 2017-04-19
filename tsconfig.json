@@ -3,7 +3,7 @@
         "target": "es5",
         "module": "commonjs",
         "outDir": "dist",
-        "rootDir": "src",
+        "rootDirs": ["lib","spec"],
         "baseUrl": "src",
         "declaration": true,
         "paths":{
@@ -16,7 +16,6 @@
         "noImplicitAny": false,
         "experimentalDecorators": true,
         "preserveConstEnums": true,
-        "allowJs": false,
         "sourceMap": false,    
         "noEmitOnError":false,
         "noEmitHelpers":true,
@@ -35,12 +34,11 @@
         "alwaysStrict":true
     },
     "filesGlob": [
-        "src/**/*.ts",
+        "lib/**/*.ts",
         "types/**/*.d.ts"
     ],
     "exclude": [
         "build",
-	    "lib",
 	    "dist",
         "node_modules"
     ],

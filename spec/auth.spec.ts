@@ -1,4 +1,4 @@
-import WebCenter from ".";
+import WebCenter from "../lib";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 

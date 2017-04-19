@@ -1,5 +1,5 @@
 import { Chance } from "chance";
-import WebCenter from ".";
+import WebCenter from "../lib";
 
 const chance: any = new Chance();
 
