@@ -6,31 +6,19 @@
         "rootDirs": ["lib","spec"],
         "baseUrl": "src",
         "declaration": true,
-        "paths":{
-            "components/*":[
-                "components/*"
-            ]            
-        },
         "moduleResolution":"node",
-        "allowSyntheticDefaultImports": true,
         "noImplicitAny": false,
-        "experimentalDecorators": true,
-        "preserveConstEnums": true,
         "sourceMap": false,    
-        "noEmitOnError":false,
+        "noEmitOnError":true,
         "noEmitHelpers":true,
         "noFallthroughCasesInSwitch":true,
-        "noImplicitReturns":false,
         "lib":[
-            "es2015.promise",
-            "es2015.collection",
-            "es2015.iterable",
+            "es2015",
             "dom",
             "es5"
         ],
         "pretty":true,
         "importHelpers": true,
-        "emitDecoratorMetadata": true,
         "alwaysStrict":true
     },
     "filesGlob": [
