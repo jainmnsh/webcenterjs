@@ -1,27 +1,13 @@
 import { Chance } from "chance";
 import WebCenter from "../lib";
+import {init, logout } from "./common";
 
 const chance: any = new Chance();
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-beforeAll(() => {
-    const restBaseUrl: string = "http://krowdtest.darden.com/rest";
-    const wcBaseUrl: string = "http://krowdtest.darden.com/webcenter";
-    const csBaseUrl: string = "http://krowdtest.darden.com/cs";
-
-    WebCenter.Config.setRestBaseUrl(restBaseUrl);
-    WebCenter.Config.setWcBaseUrl(wcBaseUrl);
-    WebCenter.Config.setCsBaseUrl(csBaseUrl);
-
-    const username: string = "880690388";
-    const password: string = "Darden88";
-
-    WebCenter.Auth.setUserName(username);
-    WebCenter.Auth.setPassword(password);
-
-    expect(restBaseUrl).toBe(WebCenter.Config.getRestBaseUrl());
-});
+beforeAll(init);
+afterAll(logout);
 
 afterAll(() => {
     WebCenter.Auth.logout();
@@ -31,7 +17,7 @@ afterAll(() => {
 describe("Discussions", () => {
 
   it("Get Forums", (done: any) => {
-    WebCenter.Discussions.getForums().then((forums: WebCenter.Discussions.Forums) => {
+     WebCenter.Discussions.getForums().then((forums: WebCenter.Discussions.Forums) => {
         expect(forums).toBeDefined();
         done();
     }, (error: any) => {
@@ -41,17 +27,17 @@ describe("Discussions", () => {
   }, 10000);
 
   it("Create Forum", (done: any) => {
-    const forumName: string = chance.word();
-    const description: string = chance.sentence();
-    WebCenter.Discussions.createForum(forumName, `${forumName} Display`, description).then(
-      (forum: WebCenter.Discussions.Forum) => {
-        expect(forum).toBeDefined();
+      const forumName: string = chance.word();
+      const description: string = chance.sentence();
+      WebCenter.Discussions.createForum(forumName, `${forumName} Display`, description).then(
+        (forum: WebCenter.Discussions.Forum) => {
+          expect(forum).toBeDefined();
+          done();
+      }, (error: any) => {
+        console.log(error);
+        fail("Failed to Create Forum.");
         done();
-    }, (error: any) => {
-      fail("Failed to Create Forum.");
-      done();
-    });
-  }, 10000);
-
+      });
+    }, 10000);
 
 });

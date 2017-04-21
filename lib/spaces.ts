@@ -32,8 +32,8 @@ const ITEMS_PER_PAGE: number = 40;
  * @param itemsPerPage pagination
  * @returns Http Promise that resolves to SpacesLists
  */
-export function getPortalLists(
-    portalName: string,
+export function getSpaceLists(
+    spaceName: string,
     query: string,
     projection: string = "summary",
     startIndex: number = 0,
@@ -42,7 +42,7 @@ export function getPortalLists(
         itemsPerPage,
         projection,
         q: query,
-        spacename: portalName,
+        spacename: spaceName,
         startIndex,
     };
     return Core.doGet(LISTS_API, params);
@@ -55,12 +55,12 @@ export function getPortalLists(
  * @param spaceList  Parameter [List](http://docs.oracle.com/cd/E23549_01/webcenter.1111/e10148/jpsdg_spaces.htm#BABGHFAH) Object
  * @returns Http Promise that resolves to SpacesList
  */
-export function createPortalList(
-    portalName: string,
+export function createSpaceList(
+    spaceName: string,
     spaceList: WebCenter.Lists.SpacesList,
     ): Promise<WebCenter.Lists.SpacesList> {
     const params: {} = {
-        spacename: portalName,
+        spacename: spaceName,
     };
     return Core.doPost(LISTS_API, spaceList, params);
 }
@@ -72,7 +72,7 @@ export function createPortalList(
  * @param description  optional description of the portal
  * @returns a Http Promise that resolves to Created Portal Object
  */
-export function createPortal(
+export function createSpace(
     name: string,
     baseTemplate: string,
     description?: string): Promise<WebCenter.Spaces.Space> {
@@ -96,7 +96,7 @@ export function createPortal(
  * @param itemsPerPage pagination
  * @returns a Http Promise that resolves to a Portal Templates
  */
-export function getPortalTemplates(
+export function getTemplates(
     search?: string,
     projection: string = "summary",
     startIndex: number = 0,
@@ -233,7 +233,7 @@ export function getSiteResources(
  * @param perPage pagination
  * @returns a Http Promise that resolves to PortalList
  */
-export function getPortals(
+export function getSpaces(
     search?: string,
     visibility: string = "joined",
     projection: string = "summary",
@@ -268,7 +268,7 @@ export function getPortals(
  * @param projection valid values are summary,details
  * @returns a Http Promise that resolves to Portal
  */
-export function getPortal(spaceName: string, projection?: string): Promise<WebCenter.Spaces.Space> {
+export function getSpace(spaceName: string, projection?: string): Promise<WebCenter.Spaces.Space> {
     const params: any = {
         spacename: spaceName,
     };
@@ -305,7 +305,7 @@ export function getChildren(
  * Delete Portal
  * @param spaceName portal name
  */
-export function deletePortal(spaceName: string): Promise<any> {
+export function deleteSpace(spaceName: string): Promise<any> {
     const params: {} = {
         spacename: spaceName,
     };
@@ -316,7 +316,7 @@ export function deletePortal(spaceName: string): Promise<any> {
  * Get Portal Attributes
  * @param spaceName portal name
  */
-export function getPortalAttributes(
+export function getAttributes(
     spaceName: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Attributes> {
@@ -336,7 +336,7 @@ export function getPortalAttributes(
  * @param attrValue Portal attribute value
  * @param attrDesc Portal attribute description
  */
-export function createPortalAttribute(
+export function createAttribute(
     spaceName: string,
     attrName: string,
     attrValue: any,
@@ -360,7 +360,7 @@ export function createPortalAttribute(
  * @param spaceName portal name
  * @param attributeName Portal attribute name
  */
-export function getPortalAttribute(spaceName: string, attributeName: string): Promise<WebCenter.Spaces.Attribute> {
+export function getAttribute(spaceName: string, attributeName: string): Promise<WebCenter.Spaces.Attribute> {
     const params: {} = {
         attribute: attributeName,
         spacename: spaceName,
@@ -375,7 +375,7 @@ export function getPortalAttribute(spaceName: string, attributeName: string): Pr
  * @param itemsPerPage Items Per Page
  * @returns a Http Promise that resolves to Members of Portal
  */
-export function getPortalMembers(
+export function getMembers(
     spaceName: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Members> {
@@ -393,7 +393,9 @@ export function getPortalMembers(
  * @param member member information
  * @returns a Http Promise that resolves to Members of Portal
  */
-export function addMember(spaceName: string, member: WebCenter.Spaces.Member): Promise<WebCenter.Spaces.Members> {
+export function addMember(
+    spaceName: string,
+    member: WebCenter.Spaces.Member): Promise<WebCenter.Spaces.Members> {
     const params: {} = {
         spacename: spaceName,
     };
@@ -404,7 +406,7 @@ export function addMember(spaceName: string, member: WebCenter.Spaces.Member): P
  * Get Portal Roles
  * @param spaceName portal name
  */
-export function getPortalRoles(spaceName: string): Promise<WebCenter.Spaces.Roles> {
+export function getSpaceRoles(spaceName: string): Promise<WebCenter.Spaces.Roles> {
     const params: {} = {
         spacename: spaceName,
     };

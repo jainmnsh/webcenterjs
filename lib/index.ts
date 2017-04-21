@@ -6,7 +6,7 @@ import * as Core from "./core";
 import * as Discussions from "./discussions";
 import * as Events from "./events";
 import * as People from "./people";
-import * as Portal from "./portal";
+import * as Spaces from "./spaces";
 import * as Wall from "./wall";
 
 export default {
@@ -19,5 +19,5 @@ export default {
     Discussions,
     Events,
     People,
-    Portal,
+    Spaces,
 };

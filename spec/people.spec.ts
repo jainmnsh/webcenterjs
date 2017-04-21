@@ -1,5 +1,6 @@
 import { Chance } from "chance";
 import WebCenter from "../lib";
+import {init, logout } from "./common";
 
 const chance: any = new Chance();
 
@@ -8,28 +9,8 @@ let status: string;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-beforeAll(() => {
-  const restBaseUrl: string = "http://krowddev.darden.com/rest";
-  const wcBaseUrl: string = "http://krowddev.darden.com/webcenter";
-  const csBaseUrl: string = "http://krowddev.darden.com/cs";
-
-  WebCenter.Config.setRestBaseUrl(restBaseUrl);
-  // WebCenter.Config.setWcBaseUrl(wcBaseUrl);
-  // WebCenter.Config.setCsBaseUrl(csBaseUrl);
-
-  const username: string = "880690388";
-  const password: string = "Darden88";
-
-  WebCenter.Auth.setUserName(username);
-  WebCenter.Auth.setPassword(password);
-
-  expect(restBaseUrl).toBe(WebCenter.Config.getRestBaseUrl());
-});
-
-afterAll(() => {
-  WebCenter.Auth.logout();
-  expect(true).toBe(true);
-});
+beforeAll(init);
+afterAll(logout);
 
 describe("People", () => {
 

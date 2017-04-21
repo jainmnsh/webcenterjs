@@ -1,14 +1,14 @@
 {
   "name": "webcenter",
   "version": "1.0.0",
-  "description": "Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
+  "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
   "main": "./dist/lib/index.js",
   "types": [
     "./dist/lib/index.d.ts",
     "./types/index.d.ts"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node spec/runner.js"
   },
   "keywords": [
     "oracle",
