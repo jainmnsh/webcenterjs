@@ -28,6 +28,7 @@
     "exclude": [
         "build",
 	    "dist",
+        ".history",
         "node_modules"
     ],
     "compileOnSave": true

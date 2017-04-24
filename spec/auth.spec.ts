@@ -4,7 +4,7 @@ import {init, logout } from "./common";
 import {
   PersonReference,
   ResourceIndex,
-  WallMessageList} from "../lib";
+  } from "../lib";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -47,13 +47,4 @@ describe("Authentication", () => {
     });
   }, 3000);
 
-  it("Get Dashboard", (done: any) => {
-    WebCenter.Wall.getMessageBoard().then((data: WallMessageList) => {
-      expect(data).toBeDefined();
-      done();
-    }, (error: any) => {
-      fail("Failed to get Message Board");
-      done();
-    });
-  }, 10000);
 });

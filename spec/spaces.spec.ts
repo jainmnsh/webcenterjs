@@ -14,6 +14,8 @@ import {
   SpacesList,
   Template,
   Templates,
+  WallMessageItem,
+  WallMessageList,
 } from "../lib";
 
 const chance: any = new Chance();
@@ -22,6 +24,9 @@ let listName: string;
 let status: string;
 let portalName: string;
 let attrName: string;
+let message: string;
+let messageId: string;
+let spaceGuid: string;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -76,6 +81,7 @@ describe("Portal", () => {
         portalName = chance.word();
         let portalDesc: string = chance.sentence();
         WebCenter.Spaces.createSpace(portalName, "Portal", portalDesc).then((space: Space) => {
+            spaceGuid = space.guid;
             expect(space.displayName).toBe(portalName);
             expect(space.description).toBe(portalDesc);
             expect(space.templateName).toBe("Portal");
@@ -119,6 +125,52 @@ describe("Portal", () => {
         }, (error: any) => {
             fail("Failed to Create Portal Attribute.");
             done();
+        });
+    }, 10000);
+
+    it("Post to Portal Message Board", (done: any) => {
+        message = chance.sentence();
+        WebCenter.Wall.postToPortal(message, spaceGuid).then((messageItem: WallMessageItem) => {
+        messageId = messageItem.id;
+        expect(messageId).toBeDefined();
+        expect(messageItem.body).toBe(message);
+        done();
+    }, (error: any) => {
+        fail("Failed to Post to Portal message board");
+        done();
+        });
+    }, 10000);
+
+    it("Get Portal Message Board", (done: any) => {
+        WebCenter.Wall.getPortalMessages(
+            spaceGuid).then((messageList: WallMessageList) => {
+        let messageItem: WallMessageItem = messageList.items[0];
+        expect(messageItem.id).toBe(messageId);
+        done();
+    }, (error: any) => {
+        console.log(error);
+        fail("Failed to get Portal Message Board");
+        done();
+        });
+    }, 10000);
+
+    it("Get Portal Message by ID", (done: any) => {
+        WebCenter.Wall.getPortalMessage(messageId, spaceGuid).then((messageItem: WallMessageItem) => {
+        expect(messageItem.id).toBe(messageId);
+        expect(messageItem.body).toBe(message);
+        done();
+        }, (error: any) => {
+        fail("Failed to get Portal Message by ID");
+        done();
+        });
+    }, 10000);
+
+    it("Delete Portal Message by ID", (done: any) => {
+        WebCenter.Wall.deletePortalMessage(messageId, spaceGuid).then((res: any) => {
+        done();
+        }, (error: any) => {
+        fail("Failed to Delete Portal Message by ID");
+        done();
         });
     }, 10000);
 

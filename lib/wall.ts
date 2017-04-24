@@ -121,19 +121,16 @@ export function getUserMessages(
 
 export function getPortalMessages(
     portalScopeId: string,
-    messageType: MessageType = MessageType.DEFAULT,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE): Promise<Wall.WallMessageList> {
-    return this.getMessages(portalScopeId, BoardType.SPACE , messageType, startIndex, itemsPerPage);
+    return getMessages(portalScopeId, MessageType.DEFAULT, BoardType.SPACE, startIndex, itemsPerPage);
 }
 
-export function post(
-    messageText: string,
+export function getVisibility(
+    guid: string = "@me",
     messageType: MessageType = MessageType.DEFAULT,
     boardType: BoardType = BoardType.PERSON,
-    guid: string = "@me",
-    linkItem?: Wall.WallLink,
-): Promise<Wall.WallMessageItem> {
+    ): string {
     let mType: string = "private";
     if (guid === "@me") {
         switch (messageType) {
@@ -179,8 +176,19 @@ export function post(
         }
     }
     if (boardType === BoardType.SPACE) {
-        mType = void 0;
+        mType = null;
     }
+    return mType;
+}
+
+export function post(
+    messageText: string,
+    messageType: MessageType = MessageType.DEFAULT,
+    boardType: BoardType = BoardType.PERSON,
+    guid: string = "@me",
+    linkItem?: Wall.WallLink,
+): Promise<Wall.WallMessageItem> {
+
     const wallMessageItem: Wall.WallMessageItem = {
         author: null,
         body: messageText,
@@ -190,7 +198,7 @@ export function post(
         links: null,
         resourceType: null,
         type: null,
-        visibilityType: mType,
+        visibilityType: getVisibility(guid, messageType, boardType),
     };
     const pars: {} = {
         "board-type": boardType === BoardType.SPACE ? "space" : "person",
@@ -211,7 +219,7 @@ export function postToPortal(
     messageText: string,
     portalScopeId: string,
     linkItem?: Wall.WallLink): Promise<Wall.WallMessageItem> {
-   return post(messageText, MessageType.DEFAULT, BoardType.SPACE, portalScopeId, linkItem);
+   return post(messageText, MessageType.PUBLIC, BoardType.SPACE, portalScopeId, linkItem);
 }
 
 export function getMessage(

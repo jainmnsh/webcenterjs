@@ -10,12 +10,16 @@ import {
   ListNames,
   Person,
   PersonList,
-  StatusItem} from "../lib";
+  StatusItem,
+  WallMessageItem,
+  WallMessageList} from "../lib";
 
 const chance: any = new Chance();
 
 let listName: string;
 let status: string;
+let message: string;
+let messageId: string;
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
@@ -24,12 +28,22 @@ afterAll(logout);
 
 describe("People", () => {
 
+  it("Update Status", (done: any) => {
+    status = chance.sentence();
+    WebCenter.People.updateStatus(status).then((statusItem: StatusItem) => {
+      expect(statusItem.note).toBe(status);
+      done();
+    }, (error: any) => {
+      fail("Failed to update Status");
+      done();
+    });
+  }, 10000);
+
   it("Get Received Invitations", (done: any) => {
     WebCenter.People.getReceivedInvitations().then((invitationList: InvitationList) => {
       expect(invitationList.resourceType).toBe("urn:oracle:webcenter:people:invitations");
       done();
     }, (error: any) => {
-      console.log(error);
       fail("Failed to Get Received Invitations.");
       done();
     });
@@ -124,23 +138,75 @@ describe("People", () => {
     });
   }, 10000);
 
-  it("Update Status", (done: any) => {
-    status = chance.sentence();
-    WebCenter.People.updateStatus(status).then((statusItem: StatusItem) => {
-      expect(statusItem.note).toBe(status);
-      done();
-    }, (error: any) => {
-      fail("Failed to update Status");
-      done();
-    });
-  }, 10000);
-
   it("Get Status", (done: any) => {
     WebCenter.People.getStatus().then((statusItem: StatusItem) => {
       expect(statusItem.note).toBe(status);
       done();
     }, (error: any) => {
       fail("Failed to Get Status");
+      done();
+    });
+  }, 10000);
+
+  it("Post to Message Board", (done: any) => {
+    message = chance.sentence();
+    WebCenter.Wall.postMessage(message).then((messageItem: WallMessageItem) => {
+      messageId = messageItem.id;
+      expect(messageId).toBeDefined();
+      expect(messageItem.body).toBe(message);
+      done();
+    }, (error: any) => {
+      fail("Failed to Post message board");
+      done();
+    });
+  }, 10000);
+
+  it("Get Message Board", (done: any) => {
+    WebCenter.Wall.getMessageBoard().then((messageList: WallMessageList) => {
+      let messageItem: WallMessageItem = messageList.items[0];
+      expect(messageItem.id).toBe(messageId);
+      done();
+    }, (error: any) => {
+      fail("Failed to get Message Board");
+      done();
+    });
+  }, 10000);
+
+  it("Get Message by ID", (done: any) => {
+    WebCenter.Wall.getUserMessage(messageId).then((messageItem: WallMessageItem) => {
+      expect(messageItem.id).toBe(messageId);
+      expect(messageItem.body).toBe(message);
+      done();
+    }, (error: any) => {
+      fail("Failed to get Message by ID");
+      done();
+    });
+  }, 10000);
+
+  xit("Update Message by ID", (done: any) => {
+    message = chance.sentence();
+    let messageItem: WallMessageItem = {
+      body: message,
+      id: messageId,
+      link: null,
+      visibilityType: WebCenter.Wall.getVisibility(),
+    };
+
+    WebCenter.Wall.updateUserMessage(messageItem).then((mesgItem: WallMessageItem) => {
+      expect(mesgItem.id).toBe(messageId);
+      expect(mesgItem.body).toBe(message);
+      done();
+    }, (error: any) => {
+      fail("Failed to update Message by ID");
+      done();
+    });
+  }, 10000);
+
+  it("Delete Message by ID", (done: any) => {
+    WebCenter.Wall.deleteUserMessage(messageId).then((res: any) => {
+      done();
+    }, (error: any) => {
+      fail("Delete to get Message by ID");
       done();
     });
   }, 10000);
