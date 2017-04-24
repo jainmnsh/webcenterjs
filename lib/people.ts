@@ -1,5 +1,30 @@
+/**
+ * @license
+ * Copyright (c) 2017 Rakesh Gajula.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import axios, { AxiosResponse } from "axios";
 import * as Core from "./core";
+import * as Feedback from "./types/feedback";
+import * as People from "./types/people";
 
 const INVITATION_API: string = "/api/people/invitations/{id}";
 const INVITATIONS_API: string = "/api/people/invitations";
@@ -19,19 +44,18 @@ const ITEMS_PER_PAGE: number = 40;
  */
 export function getReceivedInvitations(
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.People.InvitationList> {
-    const params: {} = {
-        q: "invitee:equals:@me",
-    };
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<People.InvitationList> {
 
     return Core.getResourceUrl(
         "urn:oracle:webcenter:people:invitations",
-        null,
-        params,
-        null,
-        startIndex,
-        itemsPerPage).then((url: string) => {
-        const resPromise: any = axios.get(url);
+        null).then((url: string) => {
+        const resPromise: any = axios.get(url,{
+            params: {
+                q: "invitee:equals:@me",
+                startIndex,
+                itemsPerPage,
+            },
+        });
         return resPromise.then((response: AxiosResponse) => {
             return response.data;
         });
@@ -44,19 +68,17 @@ export function getReceivedInvitations(
  */
 export function getSentInvitations(
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.People.InvitationList> {
-    const params: {} = {
-        q: "invitor:equals:@me",
-    };
-
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<People.InvitationList> {
     return Core.getResourceUrl(
         "urn:oracle:webcenter:people:invitations",
-        null,
-        params,
-        null,
-        startIndex,
-        itemsPerPage).then((url: string) => {
-        const resPromise: any = axios.get(url);
+        null).then((url: string) => {
+        const resPromise: any = axios.get(url,{
+            params: {
+                q: "invitor:equals:@me",
+                startIndex,
+                itemsPerPage,
+            },
+        });
         return resPromise.then((response: AxiosResponse) => {
             return response.data;
         });
@@ -68,7 +90,7 @@ export function getSentInvitations(
  * @param inviteId Invitation ID, once of the invitation from [[getReceivedInvitations]]
  */
 export function acceptInvite(inviteId: string): Promise<any> {
-    const invitation: WebCenter.People.InvitationItem = {
+    const invitation: People.InvitationItem = {
         id: inviteId,
         invitee: null,
         invitor: null,
@@ -86,7 +108,7 @@ export function acceptInvite(inviteId: string): Promise<any> {
 }
 
 export function ignoreInvite(inviteId: string): Promise<any> {
-    const invitation: WebCenter.People.InvitationItem = {
+    const invitation: People.InvitationItem = {
         id: inviteId,
         invitee: null,
         invitor: null,
@@ -111,7 +133,7 @@ export function deleteInvite(inviteId: string): Promise<any> {
 }
 
 export function createInvite(userGuid: string, invitationMessage: string): Promise<void> {
-    const invitation: WebCenter.People.InvitationItem = {
+    const invitation: People.InvitationItem = {
         id: null,
         invitee: {
             displayName: null,
@@ -133,7 +155,7 @@ export function createInvite(userGuid: string, invitationMessage: string): Promi
 /*
  * A List is a simple Contact Group
  */
-export function getListNames(): Promise<WebCenter.People.ListNames> {
+export function getListNames(): Promise<People.ListNames> {
     const params: {} = {
         guid: "@me",
     };
@@ -143,7 +165,7 @@ export function getListNames(): Promise<WebCenter.People.ListNames> {
 export function getReceivedFeedback(
     guid: string = "@me",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Feedback.FeedbackEntryList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Feedback.FeedbackEntryList> {
     const params: {} = {
         guid,
         selector: "@self",
@@ -154,7 +176,7 @@ export function getReceivedFeedback(
 export function getGivenFeedback(
     guid: string = "@me",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Feedback.FeedbackEntryList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Feedback.FeedbackEntryList> {
     const params: {} = {
         guid,
         selector: "@all",
@@ -162,13 +184,13 @@ export function getGivenFeedback(
     return Core.doGet(FEEDBACKS_API, params);
 }
 
-export function createFeedback(feedback: string, receiverGuid: string): Promise<WebCenter.Feedback.FeedbackEntryItem> {
+export function createFeedback(feedback: string, receiverGuid: string): Promise<Feedback.FeedbackEntryItem> {
     const params: {} = {
         guid: receiverGuid,
         selector: "@self",
     };
 
-    const feedbackItem: WebCenter.Feedback.FeedbackEntryItem = {
+    const feedbackItem: Feedback.FeedbackEntryItem = {
         author: null,
         body: feedback,
         created: null,
@@ -189,7 +211,7 @@ export function createFeedback(feedback: string, receiverGuid: string): Promise<
     return Core.doPost(FEEDBACKS_API, feedbackItem, params);
 }
 
-export function deleteFeedback(mid: string, guid: string = "@me"): Promise<WebCenter.Feedback.FeedbackEntryItem> {
+export function deleteFeedback(mid: string, guid: string = "@me"): Promise<Feedback.FeedbackEntryItem> {
     const params: {} = {
         guid,
     };
@@ -203,7 +225,7 @@ export function getPersonList(
     links?: string[],
     projection?: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.People.PersonList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<People.PersonList> {
     if (listId === "@self") {
         // requested self profile
         const pars: {} = {
@@ -236,12 +258,12 @@ export function getPersonList(
 
 export function getConnections(
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.People.PersonList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<People.PersonList> {
     const listId: string = "@connections";
     return this.getPersonList(listId, null, null, null, startIndex, itemsPerPage);
 }
 
-export function getSelf(attrs?: string[], links?: string[]): Promise<WebCenter.People.Person> {
+export function getSelf(attrs?: string[], links?: string[]): Promise<People.Person> {
     let attrsCsv: string = "";
     let linksCsv: string = "";
     if (links && links.length > 0) {
@@ -260,8 +282,8 @@ export function getSelf(attrs?: string[], links?: string[]): Promise<WebCenter.P
     return Core.doGet(LISTDETAIL_API, pars);
 }
 
-export function createList(listName: string): Promise<WebCenter.People.ListNames> {
-    const listObject: WebCenter.People.ListName = {
+export function createList(listName: string): Promise<People.ListNames> {
+    const listObject: People.ListName = {
         links: null,
         name: listName,
         resourceType: null,
@@ -293,11 +315,11 @@ export function deleteMemberFromList(listId: string, memberGuid: string): Promis
 export function addMemberToList(
     listId: string,
     memberGuid: string,
-    message?: string): Promise<WebCenter.People.ListMember> {
+    message?: string): Promise<People.ListMember> {
     /*
      Adding a member to a listId = '@connections' will send an invite to the user before adding to the connections list
      */
-    const listMember: WebCenter.People.ListMember = {
+    const listMember: People.ListMember = {
         guid: memberGuid,
         message,
         links: null,
@@ -311,7 +333,7 @@ export function addMemberToList(
     return Core.doPost(LISTDETAIL_API, listMember, pars);
 }
 
-export function getPerson(query: string, data?: string, links?: string): Promise<WebCenter.People.Person> {
+export function getPerson(query: string, data?: string, links?: string): Promise<People.Person> {
     /*
      * data – A standard set that returns all the standard data for the response, but does not include status, manager, reportees, or photos.
      * 1. If both the projection and data query string parameters are present, the data parameter will be used to determine which data to return.
@@ -384,8 +406,10 @@ export function getPerson(query: string, data?: string, links?: string): Promise
         links,
     };
 
-    return Core.getResourceUrl("urn:oracle:webcenter:people:person", null, params, null).then((url: string) => {
-        const resPromise: any = axios.get(url);
+    return Core.getResourceUrl("urn:oracle:webcenter:people:person", null).then((url: string) => {
+        const resPromise: any = axios.get(url, {
+            params,
+        });
         return resPromise.then((response: AxiosResponse) => {
             return response.data;
         });
@@ -395,7 +419,7 @@ export function getPerson(query: string, data?: string, links?: string): Promise
 export function getPersonByLoginId(
     loginId: string,
     attrs?: string[],
-    links?: string[]): Promise<WebCenter.People.Person> {
+    links?: string[]): Promise<People.Person> {
     let attrsCsv: string = "";
     let linksCsv: string = "";
     if (links && links.length > 0) {
@@ -411,7 +435,7 @@ export function getPersonByLoginId(
     }
 }
 
-export function getPersonByGuid(guid: string, attrs?: string[], links?: string[]): Promise<WebCenter.People.Person> {
+export function getPersonByGuid(guid: string, attrs?: string[], links?: string[]): Promise<People.Person> {
     let attrsCsv: string = "";
     let linksCsv: string = "";
     if (links && links.length > 0) {
@@ -425,7 +449,7 @@ export function getPersonByGuid(guid: string, attrs?: string[], links?: string[]
     return this.getPerson(query, attrsCsv, linksCsv);
 }
 
-export function getPersonByEmail(email: string, attrs?: string[], links?: string[]): Promise<WebCenter.People.Person> {
+export function getPersonByEmail(email: string, attrs?: string[], links?: string[]): Promise<People.Person> {
     let attrsCsv: string = "";
     let linksCsv: string = "";
     if (links && links.length > 0) {
@@ -439,14 +463,14 @@ export function getPersonByEmail(email: string, attrs?: string[], links?: string
     return this.getPerson(query, attrsCsv, linksCsv);
 }
 
-export function getStatus(userGuid: string = "@me"): Promise<WebCenter.People.StatusItem> {
+export function getStatus(userGuid: string = "@me"): Promise<People.StatusItem> {
     const pars: {} = {
         guid: "@me",
     };
     return Core.doGet(STATUS_API, pars);
 }
-export function updateStatus(message: string): Promise<WebCenter.People.StatusItem> {
-    const statusItem: WebCenter.People.StatusItem = {
+export function updateStatus(message: string): Promise<People.StatusItem> {
+    const statusItem: People.StatusItem = {
         links: null,
         note: message,
         resourceType: null,

@@ -1,5 +1,30 @@
+/**
+ * @license
+ * Copyright (c) 2017 Rakesh Gajula.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import axios, {AxiosResponse } from "axios";
 import * as Core from "./core";
+import * as Lists from "./types/lists";
+import * as Spaces from "./types/spaces";
 
 const SPACE_API: string = "/api/spaces/{spacename}";
 const MEMBERS_API: string = "/api/spaces/{spacename}/members";
@@ -37,7 +62,7 @@ export function getSpaceLists(
     query: string,
     projection: string = "summary",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Lists.SpacesList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Lists.SpacesList> {
     const params: {} = {
         itemsPerPage,
         projection,
@@ -57,8 +82,8 @@ export function getSpaceLists(
  */
 export function createSpaceList(
     spaceName: string,
-    spaceList: WebCenter.Lists.SpacesList,
-    ): Promise<WebCenter.Lists.SpacesList> {
+    spaceList: Lists.SpacesList,
+    ): Promise<Lists.SpacesList> {
     const params: {} = {
         spacename: spaceName,
     };
@@ -75,7 +100,7 @@ export function createSpaceList(
 export function createSpace(
     name: string,
     baseTemplate: string,
-    description?: string): Promise<WebCenter.Spaces.Space> {
+    description?: string): Promise<Spaces.Space> {
     return Core.getResourceUrl("urn:oracle:webcenter:spaces").then((spacesURL: string) => {
         const resPromise: any = axios.post(spacesURL, {
             name,
@@ -100,19 +125,18 @@ export function getTemplates(
     search?: string,
     projection: string = "summary",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Templates> {
-    const params: any = {};
-    if (search) {
-        params.search = search;
-    }
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Spaces.Templates> {
     return Core.getResourceUrl(
         "urn:oracle:webcenter:spaces:resource:templates",
-        null,
-        params,
-        projection,
-        startIndex,
-        itemsPerPage).then((url: string) => {
-        const resPromise: any = axios.get(url);
+        null).then((url: string) => {
+        const resPromise: any = axios.get(url, {
+            params : {
+                search,
+                projection,
+                startIndex,
+                itemsPerPage,
+            }
+        });
         return resPromise.then((response: AxiosResponse) => {
             return response.data;
         });
@@ -124,7 +148,7 @@ export function getTemplates(
  * @param templateName Template name
  * @param projection valid values are summary, details
  */
-export function getTemplate(templateName: string, projection?: string): Promise<WebCenter.Spaces.Template> {
+export function getTemplate(templateName: string, projection?: string): Promise<Spaces.Template> {
     const params: {templatename: string, projection?: string} = {
         templatename: templateName,
     };
@@ -145,7 +169,7 @@ export function getTemplateRoles(
     projection?: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
-    ): Promise<WebCenter.Spaces.Roles> {
+    ): Promise<Spaces.Roles> {
     const params: any = {
         templatename,
         startIndex,
@@ -166,7 +190,7 @@ export function getTemplateAttributes(
     projection?: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
-    ): Promise<WebCenter.Spaces.Attributes> {
+    ): Promise<Spaces.Attributes> {
     const params: {templatename: string, projection?: string, startIndex: number, itemsPerPage: number} = {
         itemsPerPage,
         startIndex,
@@ -207,16 +231,17 @@ export function getSiteResources(
         }
         return Core.doGet(SITERESOURCES_API, params);
     } else {
-        const params: any = {};
-        if (searchQuery) {
-            params.q = searchQuery;
-        }
         return Core.getResourceUrl(
             "urn:oracle:webcenter:spaces:siteresources",
-            null,
-            params,
-            projection).then((url: string) => {
-            return axios.get(url).then((response: AxiosResponse) => {
+            null).then((url: string) => {
+            return axios.get(url,{
+                params: {
+                    q : searchQuery,
+                    projection,
+                    startIndex,
+                    itemsPerPage,
+                }
+            }).then((response: AxiosResponse) => {
                 return response.data;
             });
         });
@@ -238,23 +263,20 @@ export function getSpaces(
     visibility: string = "joined",
     projection: string = "summary",
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Spaces> {
-    const params: any = {};
-    if (search) {
-        params.search = search;
-    }
-    if (visibility) {
-        params.visibility = visibility;
-    }
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Spaces.Spaces> {
 
     return Core.getResourceUrl(
         "urn:oracle:webcenter:spaces",
-        null,
-        params,
-        projection,
-        startIndex,
-        itemsPerPage).then((url: string) => {
-        const resPromise: any = axios.get(url);
+        null).then((url: string) => {
+        const resPromise: any = axios.get(url, {
+            params : {
+                search,
+                visibility,
+                projection,
+                startIndex,
+                itemsPerPage,
+            }
+        });
         return resPromise.then((response: AxiosResponse) => {
             return response.data;
         });
@@ -268,7 +290,7 @@ export function getSpaces(
  * @param projection valid values are summary,details
  * @returns a Http Promise that resolves to Portal
  */
-export function getSpace(spaceName: string, projection?: string): Promise<WebCenter.Spaces.Space> {
+export function getSpace(spaceName: string, projection?: string): Promise<Spaces.Space> {
     const params: any = {
         spacename: spaceName,
     };
@@ -289,7 +311,7 @@ export function getChildren(
     projection?: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
-    ): Promise<WebCenter.Spaces.Spaces> {
+    ): Promise<Spaces.Spaces> {
     const params: any = {
         spacename: spaceName,
         startIndex,
@@ -319,7 +341,7 @@ export function deleteSpace(spaceName: string): Promise<any> {
 export function getAttributes(
     spaceName: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Attributes> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Spaces.Attributes> {
     const params: any = {
         spacename: spaceName,
         startIndex,
@@ -340,8 +362,8 @@ export function createAttribute(
     spaceName: string,
     attrName: string,
     attrValue: any,
-    attrDesc?: string): Promise<WebCenter.Spaces.Attribute> {
-    const attribute: WebCenter.Spaces.Attribute = {
+    attrDesc?: string): Promise<Spaces.Attribute> {
+    const attribute: Spaces.Attribute = {
         description: attrDesc,
         links: null,
         name: attrName,
@@ -360,7 +382,7 @@ export function createAttribute(
  * @param spaceName portal name
  * @param attributeName Portal attribute name
  */
-export function getAttribute(spaceName: string, attributeName: string): Promise<WebCenter.Spaces.Attribute> {
+export function getAttribute(spaceName: string, attributeName: string): Promise<Spaces.Attribute> {
     const params: {} = {
         attribute: attributeName,
         spacename: spaceName,
@@ -378,7 +400,7 @@ export function getAttribute(spaceName: string, attributeName: string): Promise<
 export function getMembers(
     spaceName: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.Spaces.Members> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<Spaces.Members> {
     const params: {} = {
         spacename: spaceName,
         startIndex,
@@ -395,7 +417,7 @@ export function getMembers(
  */
 export function addMember(
     spaceName: string,
-    member: WebCenter.Spaces.Member): Promise<WebCenter.Spaces.Members> {
+    member: Spaces.Member): Promise<Spaces.Members> {
     const params: {} = {
         spacename: spaceName,
     };
@@ -406,7 +428,7 @@ export function addMember(
  * Get Portal Roles
  * @param spaceName portal name
  */
-export function getSpaceRoles(spaceName: string): Promise<WebCenter.Spaces.Roles> {
+export function getSpaceRoles(spaceName: string): Promise<Spaces.Roles> {
     const params: {} = {
         spacename: spaceName,
     };

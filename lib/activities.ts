@@ -1,5 +1,29 @@
+/**
+ * @license
+ * Copyright (c) 2017 Rakesh Gajula.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import * as Config from "./config";
 import * as Core from "./core";
+import * as ActivityStream from "./types/activity-stream";
 
 // tslint:disable-next-line:max-line-length
 const ACTIVITIES_API: string = "/api/activities?personGuid={personGuid}&personal={personal}&connections={connections}&connectionListIds={connectionListIds}&groupSpaces={groupSpaces}&groupSpaceGuids={groupSpaceGuids}&userGroupSpaceActivities={userGroupSpaceActivities}&followedObjects={followedObjects}&followedObjectsUserActivities={followedObjectsUserActivities}&serviceIds={serviceIds}&advancedQuery={advancedQuery}";
@@ -38,7 +62,7 @@ export function getActivities(
     followedObjectsUserActivities: boolean = true,
     serviceIds: string[] = [],
     data: string = "data,commentsSummary,likesSummary",
-    advancedQuery: string = ""): Promise<WebCenter.ActivityStream.ActivityList> {
+    advancedQuery: string = ""): Promise<ActivityStream.ActivityList> {
 
     let connectionListIdsCsv: string;
     let groupSpaceGuidsCsv: string;
@@ -72,7 +96,7 @@ export function getActivities(
 }
 
 export function createActivity(
-    activity: WebCenter.ActivityStream.Activity): Promise<WebCenter.ActivityStream.Activity> {
+    activity: ActivityStream.Activity): Promise<ActivityStream.Activity> {
     /*         let activityElement = {
      'serviceId': serviceId,
      'activityType': activityType,
@@ -96,7 +120,7 @@ export function createActivity(
     return Core.doPost(ACTIVITIES_API, activity, params);
 }
 
-export function getActivity(activityId: string): Promise<WebCenter.ActivityStream.Activity> {
+export function getActivity(activityId: string): Promise<ActivityStream.Activity> {
     const params: {} = {
         id: activityId,
     };
@@ -110,7 +134,7 @@ export function deleteActivity(activityId: string): Promise<{}> {
     return Core.doDelete(ACTIVITY_API, params);
 }
 
-export function getActivityCommentsSummary(activityId: string): Promise<WebCenter.ActivityStream.CommentsSummaryItem> {
+export function getActivityCommentsSummary(activityId: string): Promise<ActivityStream.CommentsSummaryItem> {
     const params: {} = {
         activityId,
     };
@@ -120,7 +144,7 @@ export function getActivityCommentsSummary(activityId: string): Promise<WebCente
 export function getCommentsSummary(
     serviceId: string,
     objectType: string,
-    objectId: string): Promise<WebCenter.ActivityStream.CommentsSummaryItem> {
+    objectId: string): Promise<ActivityStream.CommentsSummaryItem> {
     const params: {} = {
         serviceId,
         objectType,
@@ -133,7 +157,7 @@ export function getActivityComments(
     activityId: string,
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
-    ): Promise<WebCenter.ActivityStream.CommentList> {
+    ): Promise<ActivityStream.CommentList> {
     const params: {} = {
         activityId,
         startIndex,
@@ -152,7 +176,7 @@ export function deleteActivityComment(activityId: string, commentId: string): Pr
 
 export function createActivityCommment(
     activityId: string,
-    comment: WebCenter.ActivityStream.CommentItem): Promise<WebCenter.ActivityStream.CommentItem> {
+    comment: ActivityStream.CommentItem): Promise<ActivityStream.CommentItem> {
     const params: {} = {
         activityId,
     };
@@ -164,7 +188,7 @@ export function getComments(
     objectType: string,
     objectId: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.ActivityStream.CommentList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<ActivityStream.CommentList> {
     const params: {} = {
         serviceId,
         objectType,
@@ -179,7 +203,7 @@ export function createCommment(
     serviceId: string,
     objectType: string,
     objectId: string,
-    comment: WebCenter.ActivityStream.CommentItem): Promise<WebCenter.ActivityStream.CommentItem> {
+    comment: ActivityStream.CommentItem): Promise<ActivityStream.CommentItem> {
     const params: {} = {
         serviceId,
         objectType,
@@ -198,7 +222,7 @@ export function deleteComment(serviceId: string, objectType: string, objectId: s
     return Core.doDelete(COMMENT_API, params);
 }
 
-export function getActivityLikesSummary(activityId: string): Promise<WebCenter.ActivityStream.LikesSummaryItem> {
+export function getActivityLikesSummary(activityId: string): Promise<ActivityStream.LikesSummaryItem> {
     const params: {} = {
         activityId,
     };
@@ -208,7 +232,7 @@ export function getActivityLikesSummary(activityId: string): Promise<WebCenter.A
 export function getLikesSummary(
     serviceId: string,
     objectType: string,
-    objectId: string): Promise<WebCenter.ActivityStream.LikesSummaryItem> {
+    objectId: string): Promise<ActivityStream.LikesSummaryItem> {
     const params: {} = {
         serviceId,
         objectType,
@@ -220,7 +244,7 @@ export function getLikesSummary(
 export function getActivityLikes(
     activityId: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.ActivityStream.LikeList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<ActivityStream.LikeList> {
     const params: {} = {
         activityId,
         startIndex,
@@ -239,7 +263,7 @@ export function deleteActivityLike(activityId: string, likeId: string): Promise<
 
 export function createActivityLike(
     activityId: string,
-    like: WebCenter.ActivityStream.LikeItem = {}): Promise<WebCenter.ActivityStream.LikeItem> {
+    like: ActivityStream.LikeItem = {}): Promise<ActivityStream.LikeItem> {
     const params: {} = {
         activityId,
     };
@@ -251,7 +275,7 @@ export function getLikes(
     objectType: string,
     objectId: string,
     startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<WebCenter.ActivityStream.LikeList> {
+    itemsPerPage: number = ITEMS_PER_PAGE): Promise<ActivityStream.LikeList> {
     const params: {} = {
         serviceId,
         objectType,
@@ -266,7 +290,7 @@ export function createLike(
     serviceId: string,
     objectType: string,
     objectId: string,
-    like: WebCenter.ActivityStream.LikeItem = {}): Promise<WebCenter.ActivityStream.LikeItem> {
+    like: ActivityStream.LikeItem = {}): Promise<ActivityStream.LikeItem> {
     const params: {} = {
         serviceId,
         objectType,
@@ -285,12 +309,12 @@ export function deleteLike(serviceId: string, objectType: string, objectId: stri
     return Core.doDelete(LIKE_API, params);
 }
 
-export function processActivity(activity: WebCenter.ActivityStream.Activity) {
+export function processActivity(activity: ActivityStream.Activity) {
     const message: string = activity.message;
     const messageParts: any[] = [];
-    let actor: WebCenter.ActivityStream.Parameter;
-    let object: WebCenter.ActivityStream.Parameter;
-    let actOn: WebCenter.ActivityStream.Parameter;
+    let actor: ActivityStream.Parameter;
+    let object: ActivityStream.Parameter;
+    let actOn: ActivityStream.Parameter;
     const extendedActivity: any = activity;
 
     if (activity.detailURL) {
@@ -336,7 +360,7 @@ export function processActivity(activity: WebCenter.ActivityStream.Activity) {
             sEndIdx = chunkMessage.indexOf("]");
             selector = chunkMessage.substring(sStartIdx + 1, sEndIdx);
             selIdx = parseInt(selector, 10);
-            let item: WebCenter.ActivityStream.Parameter;
+            let item: ActivityStream.Parameter;
 
             for (let idx: number = 0; idx < activity.templateParams.items.length; idx++) {
                 item = activity.templateParams.items[idx];
@@ -362,13 +386,13 @@ export function processActivity(activity: WebCenter.ActivityStream.Activity) {
             }
         }
         const actOnFound: boolean = false;
-        let item: WebCenter.ActivityStream.Parameter;
+        let item: ActivityStream.Parameter;
         for (let idx: number = 0; idx < activity.templateParams.items.length; idx++) {
             item = activity.templateParams.items[idx];
             if (
                 (!actOnFound) &&
                 (item.type === "activity") &&
-                (item.serviceId === "oracle.webcenter.activitystreaming")) {
+                (item.serviceId === "oracle.activitystreaming")) {
                 actOn = item;
             }
         }

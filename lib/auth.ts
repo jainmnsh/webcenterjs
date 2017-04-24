@@ -1,6 +1,31 @@
+/**
+ * @license
+ * Copyright (c) 2017 Rakesh Gajula.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import * as Config from "./config";
 import * as Core from "./core";
+import * as Common from "./types/common";
 
 const LITERALS: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 const RESOURCEINDEX_SUFFIX: string = "/api/resourceIndex";
@@ -16,10 +41,10 @@ let _userName: string;
 // tslint:disable-next-line:variable-name
 let _password: string;
 // tslint:disable-next-line:variable-name
-let resourceIndex: WebCenter.Common.ResourceIndex;
+let resourceIndex: Common.ResourceIndex;
 let uToken: string;
 let authHeader: string;
-let authPromise: Promise<WebCenter.Common.ResourceIndex>;
+let authPromise: Promise<Common.ResourceIndex>;
 
 function encode(input: string): string {
     let output: string = "";
@@ -142,11 +167,11 @@ export function setPassword(password: string): void {
 
 /**
  * Method to get
- * [Resource Index](https://docs.oracle.com/cd/E21764_01/webcenter.1111/e10148/jpsdg_rest_api.htm#BABHCDIH)
+  * [Resource Index](https://docs.oracle.com/cd/E21764_01/webcenter.1111/e10148/jpsdg_rest_api.htm#BABHCDIH)
  * @returns [Resource Index](https://docs.oracle.com/cd/E21764_01/webcenter.1111/e10148/jpsdg_rest_api.htm#BABHCDIH).
- */
-export function getResourceIndex(): Promise<WebCenter.Common.ResourceIndex> {
-    return login().then((resIndex: WebCenter.Common.ResourceIndex) => {
+*/
+export function getResourceIndex(): Promise<Common.ResourceIndex> {
+    return login().then((resIndex: Common.ResourceIndex) => {
         return resIndex;
     });
 }
@@ -167,11 +192,11 @@ export function isAuthenticated(): boolean {
     return _isAuthenticated;
 }
 
-export function getCurrentUser(): Promise<WebCenter.Common.PersonReference> {
+export function getCurrentUser(): Promise<Common.PersonReference> {
     return Core.doGet(USER_PROFILE);
 }
 
-function restLogin(authorization?: string): Promise<WebCenter.Common.ResourceIndex> {
+function restLogin(authorization?: string): Promise<Common.ResourceIndex> {
     const headers: any = authorization ? { Authorization: authorization } : {};
     const restBaseUrl: string = Config.getRestBaseUrl();
 
@@ -250,7 +275,7 @@ export function logout(): void {
     _isAuthenticationInProgress = false;
 }
 
-export function login(userNameOrIdentityToken?: string, password?: string): Promise<WebCenter.Common.ResourceIndex> {
+export function login(userNameOrIdentityToken?: string, password?: string): Promise<Common.ResourceIndex> {
 
     if (_isAuthenticated) {
         return authPromise;
@@ -288,7 +313,7 @@ export function login(userNameOrIdentityToken?: string, password?: string): Prom
                 }
 
                 if (!wcBaseUrl && !csBaseUrl) {
-                    authPromise = promiseArr[0].then((resIndex: WebCenter.Common.ResourceIndex) => {
+                    authPromise = promiseArr[0].then((resIndex: Common.ResourceIndex) => {
                         _isAuthenticationInProgress = false;
                         _isAuthenticated = true;
                         return resIndex;
@@ -299,7 +324,7 @@ export function login(userNameOrIdentityToken?: string, password?: string): Prom
                     });
                 } else {
                     authPromise = axios.all(promiseArr).then(
-                        (responses: [WebCenter.Common.ResourceIndex, string, string]) => {
+                        (responses: [Common.ResourceIndex, string, string]) => {
                         _isAuthenticationInProgress = false;
                         _isAuthenticated = true;
                         return responses[0];
@@ -311,7 +336,7 @@ export function login(userNameOrIdentityToken?: string, password?: string): Prom
                 }
                 return authPromise;
             } else {
-                authPromise = restLogin(_userName).then((resIndex: WebCenter.Common.ResourceIndex) => {
+                authPromise = restLogin(_userName).then((resIndex: Common.ResourceIndex) => {
                     _isAuthenticationInProgress = false;
                     _isAuthenticated = true;
                     return resIndex;
@@ -327,7 +352,7 @@ export function login(userNameOrIdentityToken?: string, password?: string): Prom
 }
 
 function recover(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
-    return login().then((resIdx: WebCenter.Common.ResourceIndex) => {
+    return login().then((resIdx: Common.ResourceIndex) => {
 
         if (config.url.indexOf("utoken") === -1) {
             if (config.params) {
@@ -355,9 +380,14 @@ function recover(config: AxiosRequestConfig): Promise<AxiosRequestConfig> {
 }
 
 axios.interceptors.request.use((config: AxiosRequestConfig) => {
-    const url: string = config.url;
+    let url: string = config.url;
     const restBaseUrl: string = Config.getRestBaseUrl();
-    if (url.indexOf(restBaseUrl + "/api") >= 0 || url.indexOf("utoken") > 0 ) {
+    const idxPort80: number = url.indexOf(":80/");
+    if (idxPort80 > 0) {
+        url = [url.substr(0, idxPort80 ), url.substr(idxPort80 + 3)].join("");
+    }
+    config.url = url;
+    if (url.indexOf(restBaseUrl + "/api") >= 0) {
         if (isAuthenticated()) {
             if (url.indexOf("utoken") < 0) {
                 if (config.params) {

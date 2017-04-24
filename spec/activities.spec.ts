@@ -1,5 +1,15 @@
 import { Chance } from "chance";
 import WebCenter from "../lib";
+import {
+  Activity,
+  ActivityList,
+  CommentItem,
+  CommentsSummaryItem,
+  LikeItem,
+  LikesSummaryItem,
+  Parameter,
+  TemplateParameters,
+  WallMessageItem} from "../lib";
 import {init, logout } from "./common";
 
 const chance: any = new Chance();
@@ -14,10 +24,10 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 beforeAll(init);
 afterAll(logout);
 
-describe("Activity Stream", () => {
+describe("Wall Post", () => {
   postedMessageId = null;
   it("Post", (done: any) => {
-    WebCenter.Wall.postMessage(chance.sentence()).then((messageItem: WebCenter.Wall.WallMessageItem) => {
+    WebCenter.Wall.postMessage(chance.sentence()).then((messageItem: WallMessageItem) => {
         postedMessageId = messageItem.id;
         expect(postedMessageId).toBeDefined();
         done();
@@ -28,7 +38,7 @@ describe("Activity Stream", () => {
   }, 10000);
 
   it("Message By ID", (done: any) => {
-    WebCenter.Wall.getUserMessage(postedMessageId).then((messageItem: WebCenter.Wall.WallMessageItem) => {
+    WebCenter.Wall.getUserMessage(postedMessageId).then((messageItem: WallMessageItem) => {
         expect(messageItem.id).toBe(postedMessageId);
         done();
     }, (error: any) => {
@@ -39,15 +49,15 @@ describe("Activity Stream", () => {
 
   it("Get Activity for Posted Message", (done: any) => {
     activityId = null;
-    WebCenter.ActivityStream.getActivities().then((activities: WebCenter.ActivityStream.ActivityList) => {
+    WebCenter.ActivityStream.getActivities().then((activities: ActivityList) => {
       if (activities && activities.items && activities.items.length > 0 ) {
-        const filteredActivities: WebCenter.ActivityStream.Activity[] = activities.items.filter(
-          (activity: WebCenter.ActivityStream.Activity) => {
+        const filteredActivities: Activity[] = activities.items.filter(
+          (activity: Activity) => {
             let res: boolean = false;
-            const templateParams: WebCenter.ActivityStream.TemplateParameters  = activity.templateParams;
+            const templateParams: TemplateParameters  = activity.templateParams;
             if (templateParams && templateParams.items && templateParams.items.length > 0) {
-              const filteredTParams: WebCenter.ActivityStream.Parameter [] = templateParams.items.filter(
-                (param: WebCenter.ActivityStream.Parameter) => {
+              const filteredTParams: Parameter [] = templateParams.items.filter(
+                (param: Parameter) => {
                   if (((postedMessageId === param.id) && (activity.id === param.activityId))) {
                     activityId = activity.id;
                     return true;
@@ -68,17 +78,18 @@ describe("Activity Stream", () => {
         done();
       }
     }, (error: any) => {
+      console.log(error);
       fail("Get Activities Failed");
       done();
     });
   }, 10000);
 
   it("Create Activity Comment", (done: any) => {
-    const comment: WebCenter.ActivityStream.CommentItem = {
+    const comment: CommentItem = {
       text: chance.sentence(),
     };
     WebCenter.ActivityStream.createActivityCommment(activityId, comment).then(
-      (res: WebCenter.ActivityStream.CommentItem) => {
+      (res: CommentItem) => {
         commentId = res.id;
         expect(res.id).toBeDefined();
         done();
@@ -89,7 +100,7 @@ describe("Activity Stream", () => {
   }, 10000);
 
   it("Activity By ID", (done: any) => {
-    WebCenter.ActivityStream.getActivity(activityId).then((activity: WebCenter.ActivityStream.Activity) => {
+    WebCenter.ActivityStream.getActivity(activityId).then((activity: Activity) => {
         expect(activity.id).toBe(activityId);
         done();
     }, (error: any) => {
@@ -100,7 +111,7 @@ describe("Activity Stream", () => {
 
   it("Get Activity Comments Summary", (done: any) => {
     WebCenter.ActivityStream.getActivityCommentsSummary(activityId).then(
-      (commentsSummaryItem: WebCenter.ActivityStream.CommentsSummaryItem) => {
+      (commentsSummaryItem: CommentsSummaryItem) => {
         expect(commentsSummaryItem.count).toBe(1);
         done();
     }, (error: any) => {
@@ -114,7 +125,7 @@ describe("Activity Stream", () => {
         "oracle.webcenter.activitystreaming",
         "activity",
         activityId).then(
-        (commentsSummaryItem: WebCenter.ActivityStream.CommentsSummaryItem) => {
+        (commentsSummaryItem: CommentsSummaryItem) => {
           expect(commentsSummaryItem.count).toBe(1);
           done();
       }, (error: any) => {
@@ -134,10 +145,10 @@ describe("Activity Stream", () => {
   }, 10000);
 
   it("Create Activity Like", (done: any) => {
-    const like: WebCenter.ActivityStream.LikeItem = {
+    const like: LikeItem = {
     };
     WebCenter.ActivityStream.createActivityLike(activityId, like).then(
-      (res: WebCenter.ActivityStream.LikeItem) => {
+      (res: LikeItem) => {
         likeId = res.id;
         expect(res.id).toBeDefined();
         done();
@@ -149,7 +160,7 @@ describe("Activity Stream", () => {
 
   it("Get Activity Likes Summary", (done: any) => {
     WebCenter.ActivityStream.getActivityLikesSummary(activityId).then(
-      (likesSummaryItem: WebCenter.ActivityStream.LikesSummaryItem) => {
+      (likesSummaryItem: LikesSummaryItem) => {
         expect(likesSummaryItem.count).toBe(1);
         done();
     }, (error: any) => {
@@ -163,7 +174,7 @@ describe("Activity Stream", () => {
         "oracle.webcenter.activitystreaming",
         "activity",
         activityId).then(
-        (likesSummaryItem: WebCenter.ActivityStream.LikesSummaryItem) => {
+        (likesSummaryItem: LikesSummaryItem) => {
           expect(likesSummaryItem.count).toBe(1);
           done();
       }, (error: any) => {
@@ -183,7 +194,7 @@ describe("Activity Stream", () => {
   }, 10000);
 
   it("Get Activity by ID & Process", (done: any) => {
-    WebCenter.ActivityStream.getActivity(activityId).then((activity: WebCenter.ActivityStream.Activity) => {
+    WebCenter.ActivityStream.getActivity(activityId).then((activity: Activity) => {
         const processedActivity: any = WebCenter.ActivityStream.processActivity(activity);
         expect(processedActivity.messageParts).toBeDefined();
         done();
@@ -204,7 +215,7 @@ describe("Activity Stream", () => {
   }, 10000);
 
   // This test case is failing since there is no DELETE method in WebCenter REST API
-  /*it("Delete Activity By ID", (done: any) => {
+  xit("Delete Activity By ID", (done: any) => {
       WebCenter.ActivityStream.deleteActivity(activityId).then((res: any) => {
           expect(true).toBe(true);
           done();
@@ -212,5 +223,5 @@ describe("Activity Stream", () => {
         fail("Failed to Delete Activity By ID.");
         done();
       });
-    }, 10000);*/
+    }, 10000);
 });

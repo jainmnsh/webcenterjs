@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
   "main": "./dist/lib/index.js",
-  "types": [
-    "./dist/lib/index.d.ts",
-    "./types/index.d.ts"
-  ],
+  "types": "./dist/lib/index.d.ts",
   "scripts": {
-    "test": "node spec/runner.js"
+    "test": "node spec/runner.js",
+    "bundle": "browserify ./dist/lib/index.js -o ./dist/lib/webcenter.bundle.js",
+    "minify": "uglify -s ./dist/lib/webcenter.bundle.js -o ./dist/lib/webcenter.bundle.min.js"
   },
   "keywords": [
     "oracle",

@@ -1,6 +1,20 @@
 import { Chance } from "chance";
 import WebCenter from "../lib";
+
 import {init, logout } from "./common";
+
+import {
+  Attribute,
+  Attributes,
+  Member,
+  Members,
+  Roles,
+  Space,
+  Spaces,
+  SpacesList,
+  Template,
+  Templates,
+} from "../lib";
 
 const chance: any = new Chance();
 
@@ -17,7 +31,7 @@ afterAll(logout);
 describe("Portal", () => {
 
     it("Get Portal Templates", (done: any) => {
-        WebCenter.Spaces.getTemplates().then((portalTemplates: WebCenter.Spaces.Templates) => {
+        WebCenter.Spaces.getTemplates().then((portalTemplates: Templates) => {
             expect(portalTemplates.resourceType).toBe("urn:oracle:webcenter:spaces:resource:templates");
             done();
         }, (error: any) => {
@@ -27,7 +41,7 @@ describe("Portal", () => {
     }, 20000);
 
     it("Get Portal Template By Name", (done: any) => {
-        WebCenter.Spaces.getTemplate("Portal").then((portalTemplate: WebCenter.Spaces.Template) => {
+        WebCenter.Spaces.getTemplate("Portal").then((portalTemplate: Template) => {
             expect(portalTemplate.resourceType).toBe("urn:oracle:webcenter:spaces:resource:template");
             expect(portalTemplate.creator).toBe("system");
             expect(portalTemplate.name).toBe("Portal");
@@ -39,7 +53,7 @@ describe("Portal", () => {
     }, 10000);
 
     it("Get Portal Template Roles", (done: any) => {
-        WebCenter.Spaces.getTemplateRoles("Portal").then((roles: WebCenter.Spaces.Roles) => {
+        WebCenter.Spaces.getTemplateRoles("Portal").then((roles: Roles) => {
             expect(roles.resourceType).toBe("urn:oracle:webcenter:space:roles");
             done();
         }, (error: any) => {
@@ -49,7 +63,7 @@ describe("Portal", () => {
     }, 10000);
 
     it("Get Portal Template Attributes", (done: any) => {
-        WebCenter.Spaces.getTemplateAttributes("Portal").then((attrs: WebCenter.Spaces.Attributes) => {
+        WebCenter.Spaces.getTemplateAttributes("Portal").then((attrs: Attributes) => {
             expect(attrs.resourceType).toBe("urn:oracle:webcenter:space:attributes");
             done();
         }, (error: any) => {
@@ -61,7 +75,7 @@ describe("Portal", () => {
     it("Create Portal", (done: any) => {
         portalName = chance.word();
         let portalDesc: string = chance.sentence();
-        WebCenter.Spaces.createSpace(portalName, "Portal", portalDesc).then((space: WebCenter.Spaces.Space) => {
+        WebCenter.Spaces.createSpace(portalName, "Portal", portalDesc).then((space: Space) => {
             expect(space.displayName).toBe(portalName);
             expect(space.description).toBe(portalDesc);
             expect(space.templateName).toBe("Portal");
@@ -73,7 +87,7 @@ describe("Portal", () => {
     }, 40000);
 
     it("Get Portal By Name", (done: any) => {
-        WebCenter.Spaces.getSpace(portalName).then((space: WebCenter.Spaces.Space) => {
+        WebCenter.Spaces.getSpace(portalName).then((space: Space) => {
             expect(space.displayName).toBe(portalName);
             done();
         }, (error: any) => {
@@ -83,7 +97,7 @@ describe("Portal", () => {
     }, 10000);
 
     it("Get Portal Members", (done: any) => {
-        WebCenter.Spaces.getMembers(portalName).then((members: WebCenter.Spaces.Members) => {
+        WebCenter.Spaces.getMembers(portalName).then((members: Members) => {
             expect(members.items.length).toBe(1);
             done();
         }, (error: any) => {
@@ -97,7 +111,7 @@ describe("Portal", () => {
         const attrDesc: string = chance.sentence();
         const attrVal: string = chance.word();
         WebCenter.Spaces.createAttribute(portalName, attrName, attrVal, attrDesc).then(
-            (attr: WebCenter.Spaces.Attribute) => {
+            (attr: Attribute) => {
             expect(attr.resourceType).toBe("urn:oracle:webcenter:space:attribute");
             expect(attr.name).toBe(attrName);
             expect(attr.value).toBe(attrVal);
@@ -108,9 +122,9 @@ describe("Portal", () => {
         });
     }, 10000);
 
-    it("Get Portal Attribute", (done: any) => {
+    xit("Get Portal Attribute", (done: any) => {
         WebCenter.Spaces.getAttribute(portalName, attrName).then(
-            (attr: WebCenter.Spaces.Attribute) => {
+            (attr: Attribute) => {
             expect(attr.resourceType).toBe("urn:oracle:webcenter:space:attribute");
             expect(attr.name).toBe(attrName);
             done();
@@ -121,7 +135,7 @@ describe("Portal", () => {
     }, 10000);
 
     it("Get Portal Attributes", (done: any) => {
-        WebCenter.Spaces.getAttributes(portalName).then((attrs: WebCenter.Spaces.Attributes) => {
+        WebCenter.Spaces.getAttributes(portalName).then((attrs: Attributes) => {
             expect(attrs.resourceType).toBe("urn:oracle:webcenter:space:attributes");
             done();
         }, (error: any) => {

@@ -1,6 +1,11 @@
 import WebCenter from "../lib";
 import {init, logout } from "./common";
 
+import {
+  PersonReference,
+  ResourceIndex,
+  WallMessageList} from "../lib";
+
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 beforeAll(init);
@@ -8,7 +13,7 @@ afterAll(logout);
 
 describe("Authentication", () => {
   it("Perform Login", (done: any) => {
-    WebCenter.Auth.login().then((resourceIndex: WebCenter.Common.ResourceIndex) => {
+    WebCenter.Auth.login().then((resourceIndex: ResourceIndex) => {
       done();
       expect(resourceIndex.version).toBeDefined();
     }, (error: any) => {
@@ -18,7 +23,7 @@ describe("Authentication", () => {
   }, 3000);
 
   it("Get Resource Index", (done: any) => {
-    WebCenter.Auth.getResourceIndex().then((resourceIndex: WebCenter.Common.ResourceIndex) => {
+    WebCenter.Auth.getResourceIndex().then((resourceIndex: ResourceIndex) => {
       expect(resourceIndex.version).toBeDefined();
       done();
     }, (error: any) => {
@@ -33,7 +38,7 @@ describe("Authentication", () => {
   }, 3000);
 
   it("Get Current User Profile", (done: any) => {
-    WebCenter.Auth.getCurrentUser().then((user: WebCenter.Common.PersonReference) => {
+    WebCenter.Auth.getCurrentUser().then((user: PersonReference) => {
       expect(user.guid).toBeDefined();
       done();
     }, (error: any) => {
@@ -42,14 +47,13 @@ describe("Authentication", () => {
     });
   }, 3000);
 
-  /*it("Get Dashboard", (done: any) => {
-    WebCenter.Wall.getMessageBoard().then((data: WebCenter.Wall.WallMessageList) => {
+  it("Get Dashboard", (done: any) => {
+    WebCenter.Wall.getMessageBoard().then((data: WallMessageList) => {
       expect(data).toBeDefined();
       done();
     }, (error: any) => {
-      console.log(error);
       fail("Failed to get Message Board");
       done();
     });
-  }, 10000);*/
+  }, 10000);
 });

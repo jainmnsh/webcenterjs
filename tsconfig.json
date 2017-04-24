@@ -4,11 +4,11 @@
         "module": "commonjs",
         "outDir": "dist",
         "rootDirs": ["lib","spec"],
-        "baseUrl": "src",
+        "baseUrl": "lib",
         "declaration": true,
         "moduleResolution":"node",
         "noImplicitAny": false,
-        "sourceMap": false,    
+        "sourceMap": true,    
         "noEmitOnError":true,
         "noEmitHelpers":true,
         "noFallthroughCasesInSwitch":true,
@@ -17,13 +17,13 @@
             "dom",
             "es5"
         ],
-        "pretty":true,
+        "pretty":false,
         "importHelpers": true,
         "alwaysStrict":true
     },
-    "filesGlob": [
+    "include": [
         "lib/**/*.ts",
-        "types/**/*.d.ts"
+        "spec/**/*.spec.ts"
     ],
     "exclude": [
         "build",

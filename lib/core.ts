@@ -1,28 +1,49 @@
+/**
+ * @license
+ * Copyright (c) 2017 Rakesh Gajula.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import axios, {AxiosRequestConfig, AxiosResponse } from "axios";
 import * as _ from "lodash";
 import * as Auth from "./auth";
 import * as Config from "./config";
+import * as Common from "./types/common";
+import * as SiteStructure from "./types/sitestructure";
 
 const ITEMS_PER_PAGE: number = 40;
 
 export function getResourceUrlFromLinks(
-    links: WebCenter.Common.LinkElement[],
+    links: Common.LinkElement[],
     resourceType: string,
-    rel: string,
-    parameters: {},
-    projection: string,
-    startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): string {
-    const projectParam: string = projection ? (["&projection=", projection].join("")) : "";
-    const linkElements: WebCenter.Common.LinkElement[] = links.filter(
-        (link: WebCenter.Common.LinkElement, idx: number) => {
+    rel: string): string {
+
+    const linkElements: Common.LinkElement[] = links.filter(
+        (link: Common.LinkElement, idx: number) => {
         return (
                 rel ?
                 (link.resourceType === rel && link.rel === resourceType) :
                 (link.resourceType === resourceType || link.rel === resourceType));
     });
 
-    let linkEle: WebCenter.Common.LinkElement;
+    let linkEle: Common.LinkElement;
     if (linkElements.length > 0) {
         if (linkElements.length === 1) {
             linkEle = linkElements[0];
@@ -37,62 +58,12 @@ export function getResourceUrlFromLinks(
                 linkEle = linkElements[0];
             }
         }
-        let url: string;
-        if (linkEle.template) {
-            linkEle.template = linkEle.template.replace("%40", "@");
-            url = linkEle.template;
-            url = url.replace("{itemsPerPage}", itemsPerPage + "");
-            url = url.replace("{startIndex}", startIndex + "");
-            if (parameters) {
-                for (const y in parameters) {
-                    if (y) {
-                        const paramVal: string = parameters[y];
-                        url = url.replace(["{", y, "}"].join(""), paramVal ? paramVal : "");
-                    }
-                }
-            }
-            url = url.replace(/[{]\w*[}]/g, "");
-            return encodeURI([url, projectParam].join(""));
-        } else {
-            url = linkEle.href;
-            return encodeURI([url, projectParam].join(""));
-        }
+        return linkEle.template ? linkEle.template : linkEle.href;
     } else {
         return null;
     }
 }
 
-function getResourceUrlFromLinkElement(
-    link: WebCenter.Common.LinkElement,
-    parameters: {},
-    projection: string,
-    startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): string {
-    if (link) {
-        const projectParam: string = projection ? (["&projection=", projection].join("")) : "";
-        let url: string;
-        if (link.template) {
-            link.template = link.template.replace("%40", "@");
-            url = link.template;
-            url = url.replace("{itemsPerPage}", itemsPerPage + "");
-            url = url.replace("{startIndex}", startIndex + "");
-            if (parameters) {
-                for (const y in parameters) {
-                    if (y) {
-                        const paramVal: string = parameters[y];
-                        url = url.replace(["{", y, "}"].join(""), paramVal ? paramVal : "");
-                    }
-                }
-            }
-            url = url.replace(/[{]\w*[}]/g, "");
-            return encodeURI([url, projectParam].join(""));
-        } else {
-            // url = link.href;
-            // return encodeURI([url, projectParam].join(''));
-            return ([link.href, projectParam].join(""));
-        }
-    }
-}
 
 /**
  * Gets the ResourceUrl based on the following params.
@@ -107,36 +78,25 @@ function getResourceUrlFromLinkElement(
 
 export function getResourceUrl(
     resourceType: string,
-    rel?: string,
-    parameters?: {},
-    projection?: string,
-    startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): Promise<string> {
-    return Auth.getResourceIndex().then((resourceIndex: WebCenter.Common.ResourceIndex) => {
+    rel?: string
+): Promise<string> {
+    return Auth.getResourceIndex().then((resourceIndex: Common.ResourceIndex) => {
         return getResourceUrlFromLinks(
             resourceIndex.links,
             resourceType,
-            rel,
-            parameters,
-            projection,
-            startIndex,
-            itemsPerPage);
+            rel);
     });
 }
 
 export function getPersonResourceUrl(
-    person: WebCenter.Common.PersonReference,
+    person: Common.PersonReference,
     resourceType: string,
-    rel: string,
-    parameters: string[],
-    projection: string,
-    startIndex: number = 0,
-    itemsPerPage: number = ITEMS_PER_PAGE): string {
-    return getResourceUrlFromLinks(person.links, resourceType, rel, parameters, projection, startIndex, itemsPerPage);
+    rel: string): string {
+    return getResourceUrlFromLinks(person.links, resourceType, rel);
 }
 
-export function getTemplateItem(items: WebCenter.Common.LinkElement[], type: string): WebCenter.Common.LinkElement {
-    let item: WebCenter.Common.LinkElement;
+export function getTemplateItem(items: Common.LinkElement[], type: string): Common.LinkElement {
+    let item: Common.LinkElement;
 
     for (const it of items) {
         if (it.type === type) {
@@ -147,98 +107,10 @@ export function getTemplateItem(items: WebCenter.Common.LinkElement[], type: str
     return item;
 }
 
-export function getUrlParams(url: string): {} {
-    const params: {} = {};
-    if (url) {
-        const pairs: string[] = url.split("?")[1].split("&");
-        pairs.forEach((pair: string) => {
-            const pairParts: string[] = pair.split("=");
-            if (pairParts[1] !== null) {
-                const key: string = decodeURIComponent(pairParts[0]);
-                let val: string = decodeURIComponent(pairParts[1]);
-                val = val ? val.replace(/\++/g, " ").trim() : "";
-                // val = val.replace('#', '%23');
-                if (key.length === 0) {
-                    return;
-                }
-                if (!params[key]) {
-                    params[key] = val;
-                } else {
-                    if ("function" !== typeof params[key].push) {
-                        params[key] = [params[key]];
-                    }
-                    params[key].push(val);
-                }
-            }
-        });
-    }
-    return params;
-}
-
-export function getServiceUrlParams(serviceUrlSuffix: string, params?: {}): {} {
-    let url: string = serviceUrlSuffix;
-    let urlParams: {} = {};
-    let resParams: {} = {
-        data: "data",
-        itemsPerPage: ITEMS_PER_PAGE,
-        projection: "summary",
-        startIndex: 0,
-    };
-
-    if (url.indexOf("?") > 1) {
-        url = url.replace(/[{]\w*[}]/g, "");
-        urlParams = getUrlParams(url);
-        url = url.split("?")[0];
-    }
-
-    _.extend(resParams, urlParams);
-
-    if (params) {
-        _.extend(resParams, params);
-    }
-
-    resParams = resParams ? _.omitBy(resParams, _.isNil) : resParams;
-
-    /*for (const urlParamKey in urlParams) {
-        if (typeof resParams[urlParamKey] !== "boolean") {
-            if (!resParams[urlParamKey]) {
-                delete resParams[urlParamKey];
-            }
-        }
-    }*/
-    return resParams;
-}
-
-export function getServiceUrl(serviceUrlSuffix: string, params?: {}): string {
-    const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-    let url: string = serviceUrlSuffix.split("?")[0];
-
-    url = Config.getRestBaseUrl() + url;
-    for (const y in urlParams) {
-        if (y) {
-            const paramVal: string = urlParams[y];
-            url = url.replace(["{", y, "}"].join(""), paramVal ? paramVal : "");
-        }
-    }
-    return encodeURI(url);
-}
-
-export function toUrlParams(obj: {}): string {
-    const str: string[] = [];
-    for (const p in obj) {
-        if (obj[p]) {
-            str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-        }
-    }
-    return str.join("&");
-}
-
 export function doGet(serviceUrlSuffix: string, params?: {}, httpOptions?: AxiosRequestConfig): Promise<any> {
-    const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-    const url: string = getServiceUrl(serviceUrlSuffix, params);
     httpOptions = httpOptions ? httpOptions : {};
-    httpOptions.params = urlParams;
-    return axios.get(url, httpOptions).then((response) => {
+    httpOptions.params = params;
+    return axios.get(serviceUrlSuffix, httpOptions).then((response) => {
         return response.data;
     });
 }
@@ -248,12 +120,10 @@ export function doPut(
     data: any,
     params?: {},
     httpOptions?: AxiosRequestConfig): Promise<any> {
-    const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-    const url: string = getServiceUrl(serviceUrlSuffix, params);
     httpOptions = httpOptions ? httpOptions : {};
-    httpOptions.params = urlParams;
+    httpOptions.params = params;
     data = data ? _.omitBy(data, _.isNil) : data;
-    return axios.put(url, data, httpOptions).then((response) => {
+    return axios.put(serviceUrlSuffix, data, httpOptions).then((response) => {
         return response.data;
     });
 }
@@ -263,12 +133,10 @@ export function doPost(
     data: any,
     params?: {},
     httpOptions?: AxiosRequestConfig): Promise<any> {
-        const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-        const url: string = getServiceUrl(serviceUrlSuffix, params);
         httpOptions = httpOptions ? httpOptions : {};
-        httpOptions.params = urlParams;
+        httpOptions.params = params;
         data = data ? _.omitBy(data, _.isNil) : data;
-        return axios.post(url, data, httpOptions).then((response) => {
+        return axios.post(serviceUrlSuffix, data, httpOptions).then((response) => {
             return response.data;
         });
 }
@@ -277,16 +145,14 @@ export function doDelete(
     serviceUrlSuffix: string,
     params?: {},
     httpOptions?: AxiosRequestConfig): Promise<any> {
-    const urlParams: {} = getServiceUrlParams(serviceUrlSuffix, params);
-    const url: string = getServiceUrl(serviceUrlSuffix, params);
     httpOptions = httpOptions ? httpOptions : {};
-    httpOptions.params = urlParams;
-    return axios.delete(url, httpOptions).then((response) => {
+    httpOptions.params = params;
+    return axios.delete(serviceUrlSuffix, httpOptions).then((response) => {
         return response.data;
     });
 }
 
-export function getNavigations(): Promise<WebCenter.SiteStructure.RESTSiteStructureContext> {
+export function getNavigations(): Promise<SiteStructure.RESTSiteStructureContext> {
     return getResourceUrl("urn:oracle:webcenter:navigations").then((url: string) => {
         const resPromise: any = axios.get(url);
         return resPromise.then((response: AxiosResponse) => {
@@ -295,7 +161,7 @@ export function getNavigations(): Promise<WebCenter.SiteStructure.RESTSiteStruct
     });
 }
 
-export function getResourceTypes(): Promise<WebCenter.Common.ResourceTypes> {
+export function getResourceTypes(): Promise<Common.ResourceTypes> {
     return getResourceUrl("urn:oracle:webcenter:resourcetypes").then((url: string) => {
         const resPromise: any = axios.get(url);
         return resPromise.then((response: AxiosResponse) => {
@@ -304,7 +170,7 @@ export function getResourceTypes(): Promise<WebCenter.Common.ResourceTypes> {
     });
 }
 
-function determineFunctionName(link: WebCenter.Common.LinkElement): string {
+function determineFunctionName(link: Common.LinkElement): string {
     let rel: string;
     let functionName: string;
     let resourceType: string;
@@ -339,7 +205,7 @@ function traverse(data: any): any {
     if (data) {
         for (const key in data) {
             if (key !== null && key === "links") {
-                const links: WebCenter.Common.LinkElement[] = data.links;
+                const links: Common.LinkElement[] = data.links;
                 for (const link of links) {
                     const capabilitiesStr: string = link.capabilities;
                     const functionName: string = determineFunctionName(link);
@@ -352,13 +218,15 @@ function traverse(data: any): any {
                                                                 startIndex: number = 0,
                                                                 itemsPerPage: number = ITEMS_PER_PAGE,
                                                                 ): Promise<any> => {
-                                    const url: string = getResourceUrlFromLinkElement(  link,
-                                                                                        parameters,
-                                                                                        projection,
-                                                                                        startIndex,
-                                                                                        itemsPerPage);
+                                    const url: string = link.template ? link.template : link.href;
                                     if (url) {
-                                        return axios.get(url).then((response: AxiosResponse) => {
+                                        return axios.get(url, {
+                                            params: {
+                                                projection,
+                                                startIndex,
+                                                itemsPerPage,
+                                            },
+                                        }).then((response: AxiosResponse) => {
                                             return response.data;
                                         });
                                     }
@@ -371,13 +239,15 @@ function traverse(data: any): any {
                                                                     startIndex: number = 0,
                                                                     itemsPerPage: number = ITEMS_PER_PAGE,
                                                                     ): Promise<any> => {
-                                    const url: string = getResourceUrlFromLinkElement(  link,
-                                                                                        parameters,
-                                                                                        projection,
-                                                                                        startIndex,
-                                                                                        itemsPerPage);
+                                    const url: string = link.template ? link.template : link.href;
                                     if (url) {
-                                        return axios.post(url, createData).then((response: AxiosResponse) => {
+                                        return axios.post(url, createData, {
+                                            params: {
+                                                projection,
+                                                startIndex,
+                                                itemsPerPage,
+                                            },
+                                        }).then((response: AxiosResponse) => {
                                             return response.data;
                                         });
                                     }
@@ -390,13 +260,15 @@ function traverse(data: any): any {
                                                                     startIndex: number = 0,
                                                                     itemsPerPage: number = ITEMS_PER_PAGE,
                                                                     ): Promise<any> => {
-                                    const url: string = getResourceUrlFromLinkElement(  link,
-                                                                                        parameters,
-                                                                                        projection,
-                                                                                        startIndex,
-                                                                                        itemsPerPage);
+                                    const url: string = link.template ? link.template : link.href;
                                     if (url) {
-                                        return axios.put(url, updateData).then((response: AxiosResponse) => {
+                                        return axios.put(url, updateData, {
+                                            params: {
+                                                projection,
+                                                startIndex,
+                                                itemsPerPage,
+                                            },
+                                        }).then((response: AxiosResponse) => {
                                             return response.data;
                                         });
                                     }
@@ -408,13 +280,15 @@ function traverse(data: any): any {
                                                                     startIndex: number = 0,
                                                                     itemsPerPage: number = ITEMS_PER_PAGE,
                                                                     ): Promise<any> => {
-                                    const url: string = getResourceUrlFromLinkElement(  link,
-                                                                                        parameters,
-                                                                                        projection,
-                                                                                        startIndex,
-                                                                                        itemsPerPage);
+                                    const url: string = link.template ? link.template : link.href;
                                     if (url) {
-                                        return axios.delete(url).then((response: AxiosResponse) => {
+                                        return axios.delete(url, {
+                                            params: {
+                                                projection,
+                                                startIndex,
+                                                itemsPerPage,
+                                            },
+                                        }).then((response: AxiosResponse) => {
                                             return response.data;
                                         });
                                     }
@@ -444,6 +318,88 @@ axios.interceptors.response.use((response: AxiosResponse) => {
         }
     }
     return response;
+}, (error: any) => {
+    throw error;
+});
+
+function getUrlParams(url: string): {} {
+    let obj: {} = {};
+    if (url) {
+        let queryString: string = url.split("?")[1];
+        if (queryString) {
+            queryString = queryString.split("#")[0];
+            const arr: string[] = queryString.split("&");
+            for (const itm of arr) {
+                const a: string[] = itm.split("=");
+                let paramNum: string = undefined;
+                let paramName: string = a[0].replace(/\[\d*\]/, (v: string) => {
+                    paramNum = v.slice(1, -1);
+                    return "";
+                });
+                let paramValue: string = typeof(a[1]) === "undefined" ? "" : a[1];
+                paramName = decodeURIComponent(paramName);
+                paramValue = decodeURIComponent(paramValue);
+                if (obj[paramName]) {
+                    if (typeof obj[paramName] === "string") {
+                        obj[paramName] = [obj[paramName]];
+                    }
+                    if (typeof paramNum === "undefined") {
+                        obj[paramName].push(paramValue);
+                    }else {
+                        obj[paramName][paramNum] = paramValue;
+                    }
+                }else {
+                    obj[paramName] = paramValue;
+                }
+            }
+        }
+    }
+    return obj;
+}
+
+axios.interceptors.request.use((config: AxiosRequestConfig) => {
+    let url: string = config.url;
+    const restBaseUrl: string = Config.getRestBaseUrl();
+    let isApiReq: boolean = false;
+    if (url[0] === "/") {
+        url = [restBaseUrl, url].join("");
+        isApiReq = true;
+    }else {
+        const idxPort80: number = url.indexOf(":80/");
+        if (idxPort80 > 0) {
+            url = [url.substr(0, idxPort80 ), url.substr(idxPort80 + 3)].join("");
+        }
+        if (url.startsWith(restBaseUrl)) {
+            isApiReq = true;
+        }
+    }
+
+    if (isApiReq) {
+        let urlNoParams: string = url.split("?")[0];
+        const urlParams: {} = getUrlParams(url);
+        let resParams: {} = {
+            data: "data",
+            itemsPerPage: ITEMS_PER_PAGE,
+            projection: "summary",
+            startIndex: 0,
+        };
+        _.extend(resParams, urlParams, config.params);
+
+        for (const par in resParams) {
+            if (par) {
+                const paramVal: string = resParams[par];
+                if (paramVal && paramVal[0] !== "{") {
+                    urlNoParams = urlNoParams.replace(["{", par, "}"].join(""), paramVal ? paramVal : "");
+                }else {
+                    delete resParams[par];
+                }
+            }
+        }
+        config.url = encodeURI(urlNoParams);
+        config.params = resParams;
+    }
+
+    return config;
 }, (error: any) => {
     throw error;
 });

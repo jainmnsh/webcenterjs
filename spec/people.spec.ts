@@ -2,6 +2,16 @@ import { Chance } from "chance";
 import WebCenter from "../lib";
 import {init, logout } from "./common";
 
+import {
+  FeedbackEntryList,
+  Forums,
+  InvitationList,
+  ListName,
+  ListNames,
+  Person,
+  PersonList,
+  StatusItem} from "../lib";
+
 const chance: any = new Chance();
 
 let listName: string;
@@ -15,17 +25,18 @@ afterAll(logout);
 describe("People", () => {
 
   it("Get Received Invitations", (done: any) => {
-    WebCenter.People.getReceivedInvitations().then((invitationList: WebCenter.People.InvitationList) => {
+    WebCenter.People.getReceivedInvitations().then((invitationList: InvitationList) => {
       expect(invitationList.resourceType).toBe("urn:oracle:webcenter:people:invitations");
       done();
     }, (error: any) => {
+      console.log(error);
       fail("Failed to Get Received Invitations.");
       done();
     });
   }, 10000);
 
   it("Get Sent Invitations", (done: any) => {
-    WebCenter.People.getSentInvitations().then((invitationList: WebCenter.People.InvitationList) => {
+    WebCenter.People.getSentInvitations().then((invitationList: InvitationList) => {
       expect(invitationList.resourceType).toBe("urn:oracle:webcenter:people:invitations");
       done();
     }, (error: any) => {
@@ -36,8 +47,8 @@ describe("People", () => {
 
   it("Create List", (done: any) => {
     listName = chance.word({length: 10});
-    WebCenter.People.createList(listName).then((listName: WebCenter.People.ListNames) => {
-      expect(listName.resourceType).toBeDefined();
+    WebCenter.People.createList(listName).then((listNames: ListNames) => {
+      expect(listNames.resourceType).toBeDefined();
       done();
     }, (error: any) => {
       fail("Failed to Get Self.");
@@ -46,15 +57,15 @@ describe("People", () => {
   }, 10000);
 
   it("Get List Names", (done: any) => {
-    WebCenter.People.getListNames().then((listNames: WebCenter.People.ListNames) => {
+    WebCenter.People.getListNames().then((listNames: ListNames) => {
       if (listNames && listNames.items.length > 0) {
-        const filteredListNames: WebCenter.People.ListName[] = listNames.items.filter(
-          (lName: WebCenter.People.ListName) => {
+        const filteredListNames: ListName[] = listNames.items.filter(
+          (lName: ListName) => {
             return (lName.name === listName);
           });
         expect(filteredListNames.length).toBe(1);
         done();
-      }else{
+      }else {
         fail("Get List Names is Empty.");
         done();
       }
@@ -65,7 +76,7 @@ describe("People", () => {
   }, 10000);
 
   it("Get Received Feedback", (done: any) => {
-    WebCenter.People.getReceivedFeedback().then((feedbackList: WebCenter.Feedback.FeedbackEntryList) => {
+    WebCenter.People.getReceivedFeedback().then((feedbackList: FeedbackEntryList) => {
       expect(feedbackList.resourceType).toBe("urn:oracle:webcenter:feedback");
       done();
     }, (error: any) => {
@@ -75,7 +86,7 @@ describe("People", () => {
   }, 10000);
 
   it("Get Given Feedback", (done: any) => {
-    WebCenter.People.getGivenFeedback().then((feedbackList: WebCenter.Feedback.FeedbackEntryList) => {
+    WebCenter.People.getGivenFeedback().then((feedbackList: FeedbackEntryList) => {
       expect(feedbackList.resourceType).toBe("urn:oracle:webcenter:feedback");
       done();
     }, (error: any) => {
@@ -85,7 +96,7 @@ describe("People", () => {
   }, 10000);
 
   it("Get Connections", (done: any) => {
-    WebCenter.People.getConnections().then((personList: WebCenter.People.PersonList) => {
+    WebCenter.People.getConnections().then((personList: PersonList) => {
       expect(personList.resourceType).toBe("urn:oracle:webcenter:people:person:list");
       done();
     }, (error: any) => {
@@ -95,7 +106,7 @@ describe("People", () => {
   }, 10000);
 
   it("Get Self", (done: any) => {
-    WebCenter.People.getSelf().then((person: WebCenter.People.Person) => {
+    WebCenter.People.getSelf().then((person: Person) => {
       expect(person.resourceType).toBe("urn:oracle:webcenter:people:person");
       done();
     }, (error: any) => {
@@ -115,7 +126,7 @@ describe("People", () => {
 
   it("Update Status", (done: any) => {
     status = chance.sentence();
-    WebCenter.People.updateStatus(status).then((statusItem: WebCenter.People.StatusItem) => {
+    WebCenter.People.updateStatus(status).then((statusItem: StatusItem) => {
       expect(statusItem.note).toBe(status);
       done();
     }, (error: any) => {
@@ -125,7 +136,7 @@ describe("People", () => {
   }, 10000);
 
   it("Get Status", (done: any) => {
-    WebCenter.People.getStatus().then((statusItem: WebCenter.People.StatusItem) => {
+    WebCenter.People.getStatus().then((statusItem: StatusItem) => {
       expect(statusItem.note).toBe(status);
       done();
     }, (error: any) => {
