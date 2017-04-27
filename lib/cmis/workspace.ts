@@ -21,7 +21,7 @@
  * SOFTWARE.
  */
 
-import * as _ from "lodash";
+// import * as _ from "lodash";
 import CmisBase from "./base";
 import CmisEntry from "./entry";
 import CmisFeed from "./feed";
@@ -45,7 +45,11 @@ export default class CmisWorkspace extends CmisBase {
             let params: {} = { q: query };
 
             if (options) {
-                _.extend(params, options);
+                params = {
+                    ...params,
+                    ...options,
+                };
+                // _.extend(params, options);
             }
 
             for (let key in params) {
@@ -75,7 +79,11 @@ export default class CmisWorkspace extends CmisBase {
             let params: {} = { id };
 
             if (options) {
-                _.extend(params, options);
+                params = {
+                    ...params,
+                    ...options,
+                };
+                // _.extend(params, options);
             }
 
             for (let key in params) {
@@ -107,7 +115,11 @@ export default class CmisWorkspace extends CmisBase {
             let params: {} = { path };
 
             if (options) {
-                _.extend(params, options);
+                params = {
+                    ...params,
+                    ...options,
+                };
+                // _.extend(params, options);
             }
 
             for (let key in params) {

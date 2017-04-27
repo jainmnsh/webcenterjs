@@ -21,12 +21,20 @@
  * SOFTWARE.
  */
 
+/**
+ * Activity Stream provides a streaming view of the activities of your connections, actions taken in portals, 
+ * and business activities. For example, Activity Stream can note when you or a connection posts feedback, 
+ * uploads a document, or creates a discussion forum.
+ * @preferred
+ */
+
+
 import * as Config from "./config";
 import * as Core from "./core";
 import * as ActivityStream from "./types/activity-stream";
 
 // tslint:disable-next-line:max-line-length
-const ACTIVITIES_API: string = "/api/activities?personGuid={personGuid}&personal={personal}&connections={connections}&connectionListIds={connectionListIds}&groupSpaces={groupSpaces}&groupSpaceGuids={groupSpaceGuids}&userGroupSpaceActivities={userGroupSpaceActivities}&followedObjects={followedObjects}&followedObjectsUserActivities={followedObjectsUserActivities}&serviceIds={serviceIds}&advancedQuery={advancedQuery}";
+const ACTIVITIES_API: string = "/api/activities?personGuid={personGuid}&personal={personal}&connections={connections}&connectionListIds={connectionListIds}&groupSpaces={groupSpaces}&groupSpaceGuids={groupSpaceGuids}&userGroupSpaceActivities={userGroupSpaceActivities}&followedObjects={followedObjects}&followedObjectsUserActivities={followedObjectsUserActivities}&serviceIds={serviceIds}&advancedQuery={advancedQuery}&fromDate={fromDate}&toDate={toDate}";
 const ACTIVITY_API: string = "/api/activities/{id}";
 const ACTIVITY_COMMENTSSUMMARY_API: string = "/api/activities/{activityId}/commentsSummary";
 // tslint:disable-next-line:max-line-length
@@ -48,8 +56,31 @@ const ACTIVITY_LIKE_API: string = "/api/activities/{activityId}/likes/{likeId}";
 
 const ITEMS_PER_PAGE: number = 40;
 
+/**
+ * This method compliments [Activity Stream REST API](https://docs.oracle.com/middleware/11119/wcp/develop/jpsdg_people_rest.htm#JPSDG5980)
+ * 
+ * @param personGuid  GUID for the user to get activities for.
+ * @param fromDate  Specifies activities start date (yyyy-mm-dd). Defaults to 7 days from current date.
+ * @param toDate  Specifies activities end date (yyyy-mm-dd). Defaults to current date.
+ * @param startIndex  startIndex as per [Common Request Query Parameters](https://docs.oracle.com/cloud/latest/webcenter-portal-cloud/WPCSD/GUID-1A218CB7-743A-4E74-A4E9-921F4DD09F3C.htm#GUID-1228CF59-D7E9-4622-80A0-334E0A02D884).
+ * @param itemsPerPage  itemsPerPage as per [Common Request Query Parameters](https://docs.oracle.com/cloud/latest/webcenter-portal-cloud/WPCSD/GUID-1A218CB7-743A-4E74-A4E9-921F4DD09F3C.htm#GUID-1228CF59-D7E9-4622-80A0-334E0A02D884).
+ * @param personal  get personal activities ?.
+ * @param connections  get activities for connections ?.
+ * @param connectionListIds  array of connection list ids to fetch activites for.
+ * @param groupSpaces  get activities for group spaces?.
+ * @param groupSpaceGuids  get activities for group spaces ids.
+ * @param userGroupSpaceActivities  get user group spaces activities ?.
+ * @param followedObjects  get activities associated with followed objects ?.
+ * @param followedObjectsUserActivities  get followed objects user activities ?.
+ * @param serviceIds  list of service ids.
+ * @param data  data as per [Common Request Query Parameters](https://docs.oracle.com/cloud/latest/webcenter-portal-cloud/WPCSD/GUID-1A218CB7-743A-4E74-A4E9-921F4DD09F3C.htm#GUID-1228CF59-D7E9-4622-80A0-334E0A02D884).
+ * @param advancedQuery  .
+ * @returns      Comment for special return value.
+ */
 export function getActivities(
     personGuid: string = "@me",
+    fromDate: Date = new Date(Date.now() + (-7 * 24 * 3600 * 1000)),
+    toDate: Date  = new Date(),
     startIndex: number = 0,
     itemsPerPage: number = ITEMS_PER_PAGE,
     personal: boolean = true,
@@ -67,6 +98,9 @@ export function getActivities(
     let connectionListIdsCsv: string;
     let groupSpaceGuidsCsv: string;
     let serviceIdsCsv: string;
+    let fromDateStr: string;
+    let toDateStr: string;
+
     if (connectionListIds.length > 0) {
         connectionListIdsCsv = connectionListIds.join(",");
     }
@@ -76,6 +110,17 @@ export function getActivities(
     if (serviceIds.length > 0) {
         serviceIdsCsv = serviceIds.join(",");
     }
+
+    if (fromDate) {
+        fromDateStr = fromDate.toISOString();
+        fromDateStr = fromDateStr.substring(0, fromDateStr.indexOf("T"));
+    }
+
+    if (toDate) {
+        toDateStr = toDate.toISOString();
+        toDateStr = toDateStr.substring(0, toDateStr.indexOf("T"));
+    }
+
     const params: {} = {
         personGuid,
         startIndex,
@@ -91,6 +136,8 @@ export function getActivities(
         serviceIdsCsv,
         data,
         advancedQuery,
+        fromDate : fromDateStr,
+        toDate : toDateStr,
     };
     return Core.doGet(ACTIVITIES_API, params);
 }

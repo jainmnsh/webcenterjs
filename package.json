@@ -7,7 +7,8 @@
   "scripts": {
     "test": "node spec/runner.js",
     "bundle": "browserify ./dist/lib/index.js -o ./dist/lib/webcenter.bundle.js",
-    "minify": "uglify -s ./dist/lib/webcenter.bundle.js -o ./dist/lib/webcenter.bundle.min.js"
+    "minify": "uglify -s ./dist/lib/webcenter.bundle.js -o ./dist/lib/webcenter.bundle.min.js",
+    "docs": "typedoc --out docs --name WebCenterJS --module commonjs --target ES5 --excludeExternals  --includeDeclarations --theme default --excludePrivate   ./lib/"
   },
   "keywords": [
     "oracle",
@@ -18,11 +19,9 @@
   "license": "MIT",
   "dependencies": {
     "@types/jasmine": "^2.5.47",
-    "@types/lodash": "^4.14.62",
     "@types/node": "^6.0.69",
     "@types/xmldom": "^0.1.29",
     "axios": "^0.16.1",
-    "lodash": "^4.17.4",
     "tslib": "^1.6.0",
     "xmldom": "^0.1.27",
     "xpath": "^0.0.24"

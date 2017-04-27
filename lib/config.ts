@@ -25,7 +25,10 @@
 /**
  * Config allows to specify REST , WebCenter & CS Prefix URLs. This information is used in rest of the modules
  */
-import * as _ from "lodash";
+
+ /*rsciispr11 and rscisspr12*/
+ 
+// import * as _ from "lodash";
 
 let restUrl: string = "/rest";
 let csUrl: string;
@@ -40,7 +43,7 @@ function removeLastSlash(url: string): string {
         return url;
     }
 
-    if (_.endsWith(url, "/")) {
+    if (url.endsWith("/")) {
          return url.substring(0, url.length - 1);
     }else {
         return url;

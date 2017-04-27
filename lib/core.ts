@@ -22,7 +22,7 @@
  */
 
 import axios, {AxiosRequestConfig, AxiosResponse } from "axios";
-import * as _ from "lodash";
+// import * as _ from "lodash";
 import * as Auth from "./auth";
 import * as Config from "./config";
 import * as Common from "./types/common";
@@ -107,6 +107,14 @@ export function getTemplateItem(items: Common.LinkElement[], type: string): Comm
     return item;
 }
 
+function removeEmpty(obj: any): any {
+  Object.keys(obj).forEach((key) =>
+    (obj[key] && typeof obj[key] === "object") && removeEmpty(obj[key]) ||
+    (obj[key] === undefined || obj[key] === null) && delete obj[key],
+  );
+  return obj;
+}
+
 export function doGet(serviceUrlSuffix: string, params?: {}, httpOptions?: AxiosRequestConfig): Promise<any> {
     httpOptions = httpOptions ? httpOptions : {};
     httpOptions.params = params;
@@ -122,8 +130,8 @@ export function doPut(
     httpOptions?: AxiosRequestConfig): Promise<any> {
     httpOptions = httpOptions ? httpOptions : {};
     httpOptions.params = params;
-    data = data ? _.omitBy(data, _.isNil) : data;
-    return axios.put(serviceUrlSuffix, data, httpOptions).then((response) => {
+    // data = data ? _.omitBy(data, _.isNil) : data;
+    return axios.put(serviceUrlSuffix, removeEmpty(data), httpOptions).then((response) => {
         return response.data;
     });
 }
@@ -135,8 +143,8 @@ export function doPost(
     httpOptions?: AxiosRequestConfig): Promise<any> {
         httpOptions = httpOptions ? httpOptions : {};
         httpOptions.params = params;
-        data = data ? _.omitBy(data, _.isNil) : data;
-        return axios.post(serviceUrlSuffix, data, httpOptions).then((response) => {
+        // data = data ? _.omitBy(data, _.isNil) : data;
+        return axios.post(serviceUrlSuffix, removeEmpty(data), httpOptions).then((response) => {
             return response.data;
         });
 }
@@ -383,7 +391,12 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
             projection: "summary",
             startIndex: 0,
         };
-        _.extend(resParams, urlParams, config.params);
+        resParams = {
+            ...resParams,
+            ...urlParams,
+            ...config.params,
+        };
+        // _.extend(resParams, urlParams, config.params);
 
         for (const par in resParams) {
             if (par) {
@@ -397,6 +410,8 @@ axios.interceptors.request.use((config: AxiosRequestConfig) => {
         }
         config.url = encodeURI(urlNoParams);
         config.params = resParams;
+        // console.log("---------- URL ---------------", config.url);
+        // console.log("---------- Params ---------------", config.params);
     }
 
     return config;
