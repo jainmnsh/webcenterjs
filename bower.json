@@ -2,6 +2,7 @@
   "name": "webcenterjs",
   "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
   "main": "./dist/lib/webcenter.bundle.min.js",
+  "version": "1.0.2",
   "authors": [
     "Rakesh Gajula <rakesh.gajula@gmail.com>"
   ],
