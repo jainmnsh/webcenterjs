@@ -1,6 +1,6 @@
 {
-  "name": "webcenter",
-  "version": "1.0.0",
+  "name": "webcenterjs",
+  "version": "1.0.2",
   "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
@@ -30,5 +30,8 @@
     "chance": "^1.0.6",
     "jasmine": "^2.5.3",
     "jasmine-reporters": "^2.2.1"
-  }
+  },
+  "engines": {
+    "node": ">=4.2.4"
+  }  
 }

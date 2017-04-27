@@ -1,0 +1,8 @@
+/lib
+spec
+.history
+.vscode
+examples
+tsconfig.json
+tslint.json
+yarn.lock
