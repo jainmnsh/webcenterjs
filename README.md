@@ -21,12 +21,13 @@ Library encapsulates all the logic necessary for
 Works with framework of your choice. KnockoutJS, Angular, React, React Native, NodeJS, jQuery just to name a few.
 
 ## Features
-* Built with TypeScript
-* Distributed as NPM & Bower packages
-* CommonJS & Bundled distributions
-* Full Intellisense in Visual Code, WebStorm , Sublime Text etc
-* Type Definitions
+* Built with TypeScript.
+* Distributed as NPM & Bower packages.
+* CommonJS & Bundled distributions.
+* Full Intellisense in Visual Code, WebStorm , Sublime Text etc.
+* Type Definitions.
 * Automatically handles utoken & Link Model parsing.
+* Promise based.
 
 ## Installation
 
@@ -166,6 +167,27 @@ WebCenter.Wall.postMessage("Awesome Message from WebcenterJS !!!!").then(functio
 	console.error(error);
 });
 ```
+Explicit login can be performed using the following snippet, if needed
+
+```javascript
+WebCenter.Auth.login().then(function(resourceIndex){
+	console.log(resourceIndex);
+	// ... Do something elese
+	// for ex.
+	
+	/**
+	WebCenter.Wall.postMessage("Awesome Message from WebcenterJS !!!!").then(function(messageItem){
+		console.log("------ Congrats on your Post ---------", messageItem.id);
+	}, function(error) => {
+		console.error(error);
+	});
+	*/
+
+},function(error){
+	console.error(error);
+});
+```
+
 
 ## Prerequisites
 Make sure Oracle WebCenter Portal is configured as per instructions at [Configuring REST APIs](https://docs.oracle.com/middleware/1221/core/WCEDG/GUID-E2541FFF-3BE7-4A78-B632-366BAE93787A.htm#GUID-0F4492F1-3279-41B2-B38C-5F2A5B63575F)
@@ -173,4 +195,7 @@ Make sure Oracle WebCenter Portal is configured as per instructions at [Configur
 ## Link Model (HATEOAS)
 Oracle WebCenter REST API responses confirm to [HATEOAS Standard](http://docs.oracle.com/middleware/12212/wcp/develop/GUID-1A218CB7-743A-4E74-A4E9-921F4DD09F3C.htm#GUID-04B7BCD3-FC27-4E38-B7E8-2781620693EB__GUID-61700E56-6DDE-40C0-8AD9-840D32EEE607). 
 
-WebCenterJS automatically parses the link model and enriches the response
+WebCenterJS automatically parses the link model and enriches the response as shown below
+![Chrome Console](https://github.com/rakeshgajula/webcenterjs/blob/master/linkmodelparse.png?raw=true)
+
+In the above screenshot, note that the response *wcResIdx* is enriched and contains several methods that can be called direclty (*getInvitations* in this case).
