@@ -16,6 +16,8 @@ local.properties
 
 # node.js
 #
+dist/spec/
 node_modules/
+bower_components/
 npm-debug.log
 yarn-error.log

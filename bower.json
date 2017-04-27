@@ -1,0 +1,25 @@
+{
+  "name": "webcenterjs",
+  "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
+  "main": "./dist/lib/webcenter.bundle.min.js",
+  "authors": [
+    "Rakesh Gajula <rakesh.gajula@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "oracle",
+    "webcenter",
+    "rest"
+  ],
+  "homepage": "https://github.com/rakeshgajula/webcenterjs",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "axios": "^0.16.1"
+  }
+}
