@@ -50,8 +50,8 @@ Bundled distribution that integrates well with jQuery, KnockoutJS or plain old j
 Install webcenterjs NPM module as shown above and use the following snippet.
 ```javascript
 // import module
-import WebCenter from "webcenter";
-import {WallMessageItem} from "webcenter"; // Required only for TypeScript, for type definitions.
+import WebCenter from "webcenterjs";
+import {WallMessageItem} from "webcenterjs"; // Required only for TypeScript, for type definitions.
 
 /**
 * Assuming Oracle WebCeter Installation is available at 
