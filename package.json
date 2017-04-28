@@ -33,5 +33,18 @@
   },
   "engines": {
     "node": ">=4.2.4"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rakeshgajula/webcenterjs.git"
+  },  
+  "bugs": {
+    "url": "https://github.com/rakeshgajula/webcenterjs/issues"
+  },  
+  "files":[
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "homepage": "https://github.com/rakeshgajula/webcenterjs"
 }
