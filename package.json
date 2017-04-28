@@ -1,6 +1,6 @@
 {
   "name": "webcenterjs",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A Framework Independent Javascript Library that makes working with Oracle WebCenter REST API a breeze.",
   "main": "./dist/lib/index.js",
   "types": "./dist/lib/index.d.ts",
@@ -37,11 +37,11 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/rakeshgajula/webcenterjs.git"
-  },  
+  },
   "bugs": {
     "url": "https://github.com/rakeshgajula/webcenterjs/issues"
-  },  
-  "files":[
+  },
+  "files": [
     "dist",
     "LICENSE",
     "README.md"
