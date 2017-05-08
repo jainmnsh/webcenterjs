@@ -1,0 +1,54 @@
+body {
+    background-color: #f9f9f9;
+}
+html, body {
+    height: 100%;
+}
+
+.full-height{
+    height: 100%;
+}
+
+.login-container-wrapper{
+    display: table;
+    margin: auto;
+    height: 100%;
+}
+
+.login-container{
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.login-form {
+    width: 280px;
+}
+
+.margin {
+    margin: 0 !important;
+}
+
+.profile-image-login {
+    width: 100px;
+    height: 100px !important;
+}
+
+.profile-image-post {
+    width: 60px;
+    margin: 30px 10px;
+}
+
+.card-profile-title {
+    font-size: 16px;
+    padding: 20px;
+    border-radius: 0 0 2px 2px;
+}
+
+.profile-medium {
+    height: 350px;
+    overflow: hidden;
+}
+
+.card-action-share {
+    padding: 16px;
+}

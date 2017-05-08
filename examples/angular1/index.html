@@ -1,0 +1,27 @@
+<!doctype html>
+<html ng-app="WebCenterJSApp" >
+
+<head>
+  <title>WebCenterJS + Angular 1.x + Bootstrap</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Compiled and minified CSS -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.css">
+  <link rel="stylesheet" href="app.css" />
+</head>
+
+<body ng-controller="AppController as appCntrl">
+  <ng-include ng-if="appCntrl.isLoggedIn" src="'partials/app.html'"></ng-include>
+  <ng-include ng-if="!appCntrl.isLoggedIn" src="'partials/login.html'"></ng-include>
+</body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<!-- load Angular -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-materialize/0.2.2/angular-materialize.min.js"></script>
+<script type="text/javascript" src="../../dist/lib/webcenter.bundle.min.js"></script>
+<script type="text/javascript" src="app.js"></script>
+
+</html>

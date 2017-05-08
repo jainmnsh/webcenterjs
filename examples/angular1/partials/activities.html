@@ -1,0 +1,43 @@
+<div class="row" ng-repeat="activity in appCntrl.activities">
+    <div class="col s12 m12">
+        <div class="card">
+        <div class="card-profile-title">
+            <div class="row">
+                <div class="col s1">
+                    <img ng-src="{{activity.primaryActorPic}}" alt="{{activity.primaryActor.displayName}}" class="circle responsive-img valign profile-post-uer-image">                        
+                </div>
+                <div class="col s10">
+                    <p class="grey-text text-darken-4 margin">{{activity.primaryActor.displayName}}</p>
+                </div>
+            </div>
+            <!--div class="row">
+                <div class="col s12">
+                    <p>
+                        <span ng-repeat="mPart in activity.messageParts" ng-switch on="mPart.type">
+                                <a ng-switch-when="user" ng-href="#">{{mPart.displayName}}</a>
+                                <span ng-switch-when="groupSpaceRole">{{mPart.displayName}}</span>
+                                <a ng-switch-when="groupSpace">{{mPart.displayName}}</a>
+                                <span ng-switch-when="variableReference">{{mPart.displayName}}</span>
+                                <a ng-switch-when="document">{{mPart.displayName}}</a>
+                                <a ng-switch-when="wiki">{{mPart.displayName}}</a>
+                                <a ng-switch-when="blog">{{mPart.displayName}}</a>
+                                <a ng-switch-when="activity">{{mPart.displayName}}</a>
+                                <a ng-switch-when="message">{{mPart.displayName}}</a>
+                                <a ng-switch-when="topic">{{mPart.displayName}}</a>
+                                <a ng-switch-when="forum">{{mPart.displayName}}</a>
+                                <span ng-switch-default>{{mPart}}</span>
+                        </span>                        
+                    </p>                          
+                </div>
+            </div-->            
+        </div>              
+        <div class="card-content">
+            <p>{{activity.displayDescription}}</p>
+        </div>
+        <div class="card-action">
+            <a href="#">Comment</a>
+            <a href="#">Like</a>              
+        </div>
+        </div>
+    </div>
+</div>

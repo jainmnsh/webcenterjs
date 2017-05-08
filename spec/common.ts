@@ -1,9 +1,9 @@
 import WebCenter from "../lib";
 export function init(): void {
 
-    const restBaseUrl: string = "http://192.168.1.49:8888/rest";
-    const wcBaseUrl: string = "http://192.168.1.49:8888/webcenter";
-    const csBaseUrl: string = "http://192.168.1.49:16200/cs";
+    const restBaseUrl: string = "http://wchost.lan/rest";
+    const wcBaseUrl: string = "http://wchost.lan/webcenter";
+    const csBaseUrl: string = "http://wchost.lan/cs";
 
     WebCenter.Config.setRestBaseUrl(restBaseUrl);
     WebCenter.Config.setWcBaseUrl(wcBaseUrl);
