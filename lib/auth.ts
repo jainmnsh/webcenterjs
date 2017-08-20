@@ -21,7 +21,6 @@
  * SOFTWARE.
  */
 
-
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import * as Config from "./config";
 import * as Core from "./core";
@@ -46,7 +45,7 @@ let uToken: string;
 let authHeader: string;
 let authPromise: Promise<Common.ResourceIndex>;
 
-function encode(input: string): string {
+export function base64Encode(input: string): string {
     let output: string = "";
     // tslint:disable-next-line:one-variable-per-declaration
     let chr1: number, chr2: number, chr3: number = -1;
@@ -86,7 +85,7 @@ function encode(input: string): string {
     return output;
 }
 
-function decode(input: string) {
+export function decodeBase64(input: string): string {
     let output: string = "";
     // tslint:disable-next-line:one-variable-per-declaration
     let chr1: number, chr2: number, chr3: number = -1;
@@ -199,9 +198,14 @@ export function getCurrentUser(): Promise<Common.PersonReference> {
 function restLogin(authorization?: string): Promise<Common.ResourceIndex> {
     const headers: any = authorization ? { Authorization: authorization } : {};
     const restBaseUrl: string = Config.getRestBaseUrl();
+    const random: number = Date.now();
 
     return axios.get(restBaseUrl + RESOURCEINDEX_SUFFIX, {
         headers,
+        params: {
+            _ : random,
+        },
+        withCredentials: true,
     }).then((response: AxiosResponse) => {
         uToken = response.headers["x-oracle-rf-token"];
         authHeader = authorization;
@@ -291,7 +295,7 @@ export function login(userNameOrIdentityToken?: string, password?: string): Prom
 
             if (_password) {
                 const words: string = _userName + ":" + _password;
-                const base64: string = encode(words);
+                const base64: string = base64Encode(words);
                 const authorization: string = "Basic " + base64;
 
                 const restBaseUrl: string = Config.getRestBaseUrl();

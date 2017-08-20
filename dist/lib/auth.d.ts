@@ -1,4 +1,6 @@
 import * as Common from "./types/common";
+export declare function base64Encode(input: string): string;
+export declare function decodeBase64(input: string): string;
 /**
  * sets OIT Token for authorization
  * @param oit oracle identity token that is generated from call to WCSecurityUtility.issueTrustServiceSecurityToken()

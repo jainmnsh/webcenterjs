@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @license
  * Copyright (c) 2017 Rakesh Gajula.
@@ -20,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * Activity Stream provides a streaming view of the activities of your connections, actions taken in portals,
@@ -398,7 +398,7 @@ function processActivity(activity) {
             item = activity.templateParams.items[idx];
             if ((!actOnFound) &&
                 (item.type === "activity") &&
-                (item.serviceId === "oracle.activitystreaming")) {
+                (item.serviceId === "oracle.webcenter.activitystreaming")) {
                 actOn = item;
             }
         }

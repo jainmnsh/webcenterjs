@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @license
  * Copyright (c) 2017 Rakesh Gajula.
@@ -20,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = require("axios");
 var Config = require("./config");
@@ -42,7 +42,7 @@ var resourceIndex;
 var uToken;
 var authHeader;
 var authPromise;
-function encode(input) {
+function base64Encode(input) {
     var output = "";
     // tslint:disable-next-line:one-variable-per-declaration
     var chr1, chr2, chr3 = -1;
@@ -77,7 +77,8 @@ function encode(input) {
     } while (i < input.length);
     return output;
 }
-function decode(input) {
+exports.base64Encode = base64Encode;
+function decodeBase64(input) {
     var output = "";
     // tslint:disable-next-line:one-variable-per-declaration
     var chr1, chr2, chr3 = -1;
@@ -113,6 +114,7 @@ function decode(input) {
     } while (i < input.length);
     return output;
 }
+exports.decodeBase64 = decodeBase64;
 /**
  * sets OIT Token for authorization
  * @param oit oracle identity token that is generated from call to WCSecurityUtility.issueTrustServiceSecurityToken()
@@ -181,8 +183,13 @@ exports.getCurrentUser = getCurrentUser;
 function restLogin(authorization) {
     var headers = authorization ? { Authorization: authorization } : {};
     var restBaseUrl = Config.getRestBaseUrl();
+    var random = Date.now();
     return axios_1.default.get(restBaseUrl + RESOURCEINDEX_SUFFIX, {
         headers: headers,
+        params: {
+            _: random,
+        },
+        withCredentials: true,
     }).then(function (response) {
         uToken = response.headers["x-oracle-rf-token"];
         authHeader = authorization;
@@ -268,7 +275,7 @@ function login(userNameOrIdentityToken, password) {
             _password = password ? password : _password;
             if (_password) {
                 var words = _userName + ":" + _password;
-                var base64 = encode(words);
+                var base64 = base64Encode(words);
                 var authorization = "Basic " + base64;
                 var restBaseUrl = Config.getRestBaseUrl();
                 var wcBaseUrl = Config.getWcBaseUrl();

@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @license
  * Copyright (c) 2017 Rakesh Gajula.
@@ -20,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = require("tslib");
 var axios_1 = require("axios");
@@ -305,7 +305,7 @@ function getUrlParams(url) {
             var arr = queryString.split("&");
             var _loop_2 = function (itm) {
                 var a = itm.split("=");
-                var paramNum = undefined;
+                var paramNum;
                 var paramName = a[0].replace(/\[\d*\]/, function (v) {
                     paramNum = v.slice(1, -1);
                     return "";
@@ -336,6 +336,14 @@ function getUrlParams(url) {
     }
     return obj;
 }
+function registerRequestInterceptor(onFulfilled, onRejected) {
+    return axios_1.default.interceptors.request.use(onFulfilled, onRejected);
+}
+exports.registerRequestInterceptor = registerRequestInterceptor;
+function registerResponseInterceptor(onFulfilled, onRejected) {
+    return axios_1.default.interceptors.response.use(onFulfilled, onRejected);
+}
+exports.registerResponseInterceptor = registerResponseInterceptor;
 axios_1.default.interceptors.request.use(function (config) {
     var url = config.url;
     var restBaseUrl = Config.getRestBaseUrl();

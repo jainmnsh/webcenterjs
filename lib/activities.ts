@@ -439,7 +439,7 @@ export function processActivity(activity: ActivityStream.Activity) {
             if (
                 (!actOnFound) &&
                 (item.type === "activity") &&
-                (item.serviceId === "oracle.activitystreaming")) {
+                (item.serviceId === "oracle.webcenter.activitystreaming")) {
                 actOn = item;
             }
         }

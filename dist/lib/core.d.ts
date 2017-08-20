@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, AxiosResponse } from "axios";
 import * as Common from "./types/common";
 import * as SiteStructure from "./types/sitestructure";
 export declare function getResourceUrlFromLinks(links: Common.LinkElement[], resourceType: string, rel: string): string;
@@ -43,3 +43,5 @@ export declare function doPost(serviceUrlSuffix: string, data: any, params?: {},
 export declare function doDelete(serviceUrlSuffix: string, params?: {}, httpOptions?: AxiosRequestConfig): Promise<any>;
 export declare function getNavigations(): Promise<SiteStructure.RESTSiteStructureContext>;
 export declare function getResourceTypes(): Promise<Common.ResourceTypes>;
+export declare function registerRequestInterceptor(onFulfilled: (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>, onRejected?: (error: any) => any): number;
+export declare function registerResponseInterceptor(onFulfilled: (value: AxiosResponse) => AxiosResponse | Promise<AxiosResponse>, onRejected?: (error: any) => any): number;

@@ -32,7 +32,7 @@ export default class CmisFeed extends CmisObject {
     getNextFeed(): Promise<CmisFeed>;
     getPreviosFeed(): Promise<CmisFeed>;
     removeEntry(cmisObjectId: string): CmisEntry[];
-    deleteEntry(entry: CmisEntry): Promise<any>;
+    deleteEntry(entry: CmisEntry): Promise<string>;
     private processEntries();
     private getResource(url, accept, type);
 }

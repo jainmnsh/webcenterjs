@@ -331,7 +331,7 @@ axios.interceptors.response.use((response: AxiosResponse) => {
 });
 
 function getUrlParams(url: string): {} {
-    let obj: {} = {};
+    const obj: {} = {};
     if (url) {
         let queryString: string = url.split("?")[1];
         if (queryString) {
@@ -339,7 +339,7 @@ function getUrlParams(url: string): {} {
             const arr: string[] = queryString.split("&");
             for (const itm of arr) {
                 const a: string[] = itm.split("=");
-                let paramNum: string = undefined;
+                let paramNum: string;
                 let paramName: string = a[0].replace(/\[\d*\]/, (v: string) => {
                     paramNum = v.slice(1, -1);
                     return "";
@@ -363,6 +363,18 @@ function getUrlParams(url: string): {} {
         }
     }
     return obj;
+}
+
+export function registerRequestInterceptor(
+    onFulfilled: (value: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>,
+    onRejected?: (error: any) => any): number {
+        return axios.interceptors.request.use(onFulfilled, onRejected);
+}
+
+export function registerResponseInterceptor(
+    onFulfilled: (value: AxiosResponse) => AxiosResponse | Promise<AxiosResponse>,
+    onRejected?: (error: any) => any): number {
+        return axios.interceptors.response.use(onFulfilled, onRejected);
 }
 
 axios.interceptors.request.use((config: AxiosRequestConfig) => {

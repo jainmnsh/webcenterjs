@@ -1,3 +1,4 @@
+"use strict";
 /**
  * @license
  * Copyright (c) 2017 Rakesh Gajula.
@@ -20,7 +21,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var axios_1 = require("axios");
 var xmldom = require("xmldom");
