@@ -205,7 +205,6 @@ function restLogin(authorization?: string): Promise<Common.ResourceIndex> {
         params: {
             _ : random,
         },
-        withCredentials: true,
     }).then((response: AxiosResponse) => {
         uToken = response.headers["x-oracle-rf-token"];
         authHeader = authorization;
